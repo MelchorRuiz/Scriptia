@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from "@tailwindcss/vite";
-import preact from '@astrojs/preact';
+import react from '@astrojs/react';
 import node from '@astrojs/node';
 import clerk from "@clerk/astro";
 
@@ -10,8 +10,8 @@ import { dark } from '@clerk/themes'
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [ 
-    preact(), 
+  integrations: [
+    react(),
     clerk({
       localization: esMX,
       appearance: {
