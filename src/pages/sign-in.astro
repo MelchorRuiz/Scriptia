@@ -1,10 +1,338 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { SignIn as ClerkSignIn } from '@clerk/astro/components'
+import { SignIn as ClerkSignIn } from "@clerk/astro/components";
 ---
 
 <Layout title="Scriptia - Login">
-    <div class="w-dvw h-dvh flex items-center justify-center">
-        <ClerkSignIn />
+    <div class="w-dvw h-dvh flex justify-center items-center">
+        <div class="flex gap-4 h-fit">
+            <div class="w-[630px] py-2 flex flex-col gap-4">
+                <h1 class="text-6xl font-bold text-white font-display">
+                    scriptia
+                </h1>
+                <div class="overflow-hidden w-full h-full">
+                    <div
+                        id="screen"
+                        class="w-full min-h-full text-sm font-bold leading-4.5 box-border text-left font-mono text-lime-200"
+                    >
+                    </div>
+                </div>
+            </div>
+            <ClerkSignIn />
+        </div>
     </div>
 </Layout>
+
+<style is:inline>
+    .terminal_emulator__field,
+    .terminal_emulator__command {
+        position: relative;
+        padding: 0 1em;
+        margin: 0 0 9px 0;
+
+        &:before,
+        &:after {
+            position: absolute;
+        }
+
+        &:before {
+            left: 0;
+            top: 0;
+            content: "$";
+        }
+    }
+
+    .terminal_emulator__response,
+    .terminal_emulator__command b {
+        padding-bottom: 9px;
+    }
+
+    .terminal_emulator__field {
+        display: inline-block;
+        min-width: 1em;
+        min-height: 1.5em;
+        box-sizing: border-box;
+        &:after {
+            right: 0;
+            bottom: 0.25em;
+
+            content: "";
+            width: 1em;
+            height: 1.5em;
+            background: oklch(93.8% 0.127 124.321);
+
+            animation: caretBlink 1s infinite;
+        }
+
+        &.waiting {
+            padding-left: 0;
+            padding-right: 0;
+            &:before {
+                display: none;
+            }
+        }
+    }
+
+    @keyframes caretBlink {
+        0% {
+            opacity: 0;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        51% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+</style>
+
+<script>
+    class TerminalEmulator {
+        screen: HTMLElement;
+        field: HTMLElement;
+        fieldwrap: HTMLElement;
+
+        constructor(screen: HTMLElement) {
+            this.screen = screen;
+
+            const inputField = document.createElement("div");
+            const inputWrap = document.createElement("div");
+
+            inputField.className = "terminal_emulator__field";
+            inputField.innerHTML = "";
+            inputWrap.appendChild(inputField);
+            this.screen.appendChild(inputWrap);
+            this.field = inputField;
+            this.fieldwrap = inputWrap;
+        }
+
+        enterInput(input: string) {
+            return new Promise<void>((resolve) => {
+                const randomSpeed = (max: number, min: number) => {
+                    return Math.random() * (max - min) + min;
+                };
+
+                let speed = randomSpeed(70, 90);
+                let i = 0;
+                let str = "";
+                const type = () => {
+                    str = str + input[i];
+                    this.field.innerHTML = str.replace(/ /g, "&nbsp;");
+                    i++;
+
+                    setTimeout(() => {
+                        if (i < input.length) {
+                            if (i % 5 === 0) speed = randomSpeed(80, 120);
+                            type();
+                        } else {
+                            setTimeout(() => {
+                                const resp = document.createElement("div");
+                                resp.className = "terminal_emulator__command";
+                                resp.innerHTML = this.field.innerHTML;
+                                this.screen.removeChild(
+                                    this.screen.firstChild as HTMLElement,
+                                );
+                                this.screen.insertBefore(resp, this.fieldwrap);
+
+                                this.field.innerHTML = "";
+                                resolve();
+                            }, 400);
+                        }
+                    }, speed);
+                };
+
+                type();
+            });
+        }
+
+        enterInputQuick(input: string) {
+            const resp = document.createElement("div");
+            resp.className = "terminal_emulator__command";
+            resp.innerHTML = input.replace(/ /g, "&nbsp;");
+            this.screen.insertBefore(resp, this.fieldwrap);
+        }
+
+        enterResponse(response: string, remove: boolean = true) {
+            const resp = document.createElement("div");
+            resp.className = "terminal_emulator__response";
+            resp.innerHTML = response;
+            if (remove) {
+                this.screen.removeChild(this.screen.firstChild as HTMLElement);
+            }
+            this.screen.insertBefore(resp, this.fieldwrap);
+        }
+
+        wait(time: number, busy: boolean = true) {
+            return new Promise<void>((resolve) => {
+                if (busy) {
+                    this.field.classList.add("waiting");
+                } else {
+                    this.field.classList.remove("waiting");
+                }
+                setTimeout(() => {
+                    resolve();
+                }, time);
+            });
+        }
+    }
+
+    const steps = [
+        { action: "wait", time: 1000, busy: false },
+        { action: "input", value: "sudo apt update" },
+        { action: "wait", time: 300 },
+        {
+            action: "response",
+            value: "Hit:1 http://archive.ubuntu.com/ubuntu focal InRelease",
+        },
+        { action: "wait", time: 250 },
+        { action: "response", value: "Reading package lists... Done" },
+        { action: "wait", time: 180 },
+        { action: "response", value: "Building dependency tree" },
+        { action: "wait", time: 150 },
+        { action: "response", value: "Reading state information... Done" },
+        { action: "wait", time: 100 },
+        { action: "response", value: "All packages are up to date." },
+        { action: "wait", time: 800, busy: false },
+        { action: "input", value: "sudo apt install nginx -y" },
+        { action: "wait", time: 220 },
+        { action: "response", value: "Reading package lists... Done" },
+        { action: "wait", time: 180 },
+        { action: "response", value: "Building dependency tree" },
+        { action: "wait", time: 160 },
+        { action: "response", value: "Reading state information... Done" },
+        { action: "wait", time: 130 },
+        {
+            action: "response",
+            value: "The following NEW packages will be installed:",
+        },
+        { action: "response", value: "  nginx" },
+        {
+            action: "response",
+            value: "0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.",
+        },
+        { action: "wait", time: 300 },
+        { action: "response", value: "Need to get 500 kB of archives." },
+        {
+            action: "response",
+            value: "After this operation, 2,300 kB of additional disk space will be used.",
+        },
+        { action: "wait", time: 200 },
+        { action: "response", value: "Fetched 500 kB in 1s (450 kB/s)" },
+        { action: "wait", time: 100 },
+        {
+            action: "response",
+            value: "Selecting previously unselected package nginx.",
+        },
+        { action: "wait", time: 180 },
+        { action: "response", value: "Setting up nginx (1.18.0-0ubuntu1) ..." },
+        { action: "wait", time: 600, busy: false },
+        { action: "input", value: "systemctl start nginx" },
+        { action: "wait", time: 100, busy: false },
+        { action: "input", value: "systemctl status nginx" },
+        { action: "wait", time: 180 },
+        {
+            action: "response",
+            value: "● nginx.service - A high performance web server and a reverse proxy server",
+        },
+        {
+            action: "response",
+            value: "     Loaded: loaded (/lib/systemd/system/nginx.service; enabled)",
+        },
+        {
+            action: "response",
+            value: "     Active: active (running) since Tue 2025-05-13 10:21:33 UTC; 2s ago",
+        },
+        { action: "response", value: "   Main PID: 1423 (nginx)" },
+        { action: "response", value: "      Tasks: 2 (limit: 2345)" },
+        { action: "response", value: "     Memory: 3.5M" },
+        {
+            action: "response",
+            value: "     CGroup: /system.slice/nginx.service",
+        },
+        {
+            action: "response",
+            value: "             ├─1423 nginx: master process /usr/sbin/nginx",
+        },
+        {
+            action: "response",
+            value: "             └─1424 nginx: worker process",
+        },
+        { action: "wait", time: 600, busy: false },
+        {
+            action: "input",
+            value: "git clone https://github.com/usuario/misitio-web.git",
+        },
+        { action: "wait", time: 200 },
+        { action: "response", value: "Cloning into 'misitio-web'..." },
+        { action: "wait", time: 150 },
+        { action: "response", value: "remote: Enumerating objects: 42, done." },
+        { action: "wait", time: 90 },
+        {
+            action: "response",
+            value: "remote: Counting objects: 100% (42/42), done.",
+        },
+        { action: "wait", time: 80 },
+        {
+            action: "response",
+            value: "remote: Compressing objects: 100% (30/30), done.",
+        },
+        { action: "wait", time: 140 },
+        {
+            action: "response",
+            value: "Receiving objects: 100% (42/42), 12.34 KiB | 1.23 MiB/s, done.",
+        },
+        { action: "wait", time: 900, busy: false },
+        { action: "input", value: "cp -r misitio-web/* /var/www/html/" },
+        { action: "wait", time: 700, busy: false },
+        { action: "input", value: "systemctl restart nginx" },
+        { action: "wait", time: 400, busy: false },
+        { action: "input", value: "curl -I http://localhost" },
+        { action: "wait", time: 100 },
+        { action: "response", value: "HTTP/1.1 200 OK" },
+        { action: "response", value: "Server: nginx/1.18.0 (Ubuntu)" },
+        { action: "response", value: "Date: Tue, 13 May 2025 10:21:45 GMT" },
+        { action: "response", value: "Content-Type: text/html" },
+        { action: "response", value: "Content-Length: 612" },
+        { action: "response", value: "Connection : keep-alive" },
+        { action: "wait", time: 400, busy: false },
+    ];
+
+    const e = document.getElementById("screen") as HTMLElement;
+    const terminal = new TerminalEmulator(e);
+
+    for (const [i, step] of steps.entries()) {
+        if (step.action === "input") {
+            terminal.enterInputQuick(step.value || "");
+        } else if (step.action === "response") {
+            terminal.enterResponse(step.value || "", false);
+        }
+
+        if (i == 23) {
+            break;
+        }
+    }
+
+    let i = 24;
+    while (true) {
+        const step = steps[i];
+        if (step.action === "wait") {
+            await terminal.wait(step.time || 0, step.busy);
+        } else if (step.action === "input") {
+            await terminal.enterInput(step.value || "");
+        } else if (step.action === "response") {
+            terminal.enterResponse(step.value || "");
+        }
+
+        if (i >= steps.length - 1) {
+            i = 0;
+        } else {
+            i++;
+        }
+    }
+</script>
