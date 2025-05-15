@@ -2,3 +2,14 @@
 @import "flowbite/src/themes/default";
 @plugin "flowbite/plugin";
 @source "../../node_modules/flowbite";
+
+@font-face {
+  font-family: "Mad Hacker";
+  font-style: normal;
+  font-weight: normal;
+  src: url('/mad-hacker.ttf') format('truetype');
+}
+
+@theme {
+  --font-display: "Mad Hacker", sans-serif;
+}
