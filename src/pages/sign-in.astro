@@ -1,9 +1,9 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import LayoutLogin from "../layouts/LayoutLogin.astro";
 import { SignIn as ClerkSignIn } from "@clerk/astro/components";
 ---
 
-<Layout title="Scriptia - Login">
+<LayoutLogin title="Scriptia - Iniciar sesión">
     <div class="w-dvw h-dvh flex justify-center items-center">
         <div class="flex flex-col lg:flex-row items-center gap-4 h-fit">
             <div class="lg:w-[500px] xl:w-[630px] py-2 flex flex-col gap-4">
@@ -18,10 +18,12 @@ import { SignIn as ClerkSignIn } from "@clerk/astro/components";
                     </div>
                 </div>
             </div>
-            <ClerkSignIn />
+            <div class="w-[400px]">
+                <ClerkSignIn />
+            </div>
         </div>
     </div>
-</Layout>
+</LayoutLogin>
 
 <style is:inline>
     .terminal_emulator__field,
