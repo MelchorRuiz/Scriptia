@@ -5,15 +5,15 @@ import { SignIn as ClerkSignIn } from "@clerk/astro/components";
 
 <Layout title="Scriptia - Login">
     <div class="w-dvw h-dvh flex justify-center items-center">
-        <div class="flex gap-4 h-fit">
-            <div class="w-[630px] py-2 flex flex-col gap-4">
-                <h1 class="text-6xl font-bold text-white font-display">
+        <div class="flex flex-col lg:flex-row items-center gap-4 h-fit">
+            <div class="lg:w-[500px] xl:w-[630px] py-2 flex flex-col gap-4">
+                <h1 class="text-6xl text-center lg:text-left font-bold text-white font-display">
                     scriptia
                 </h1>
-                <div class="overflow-hidden w-full h-full">
+                <div class="overflow-hidden w-full h-full hidden lg:block">
                     <div
                         id="screen"
-                        class="w-full min-h-full text-sm font-bold leading-4.5 box-border text-left font-mono text-lime-200"
+                        class="w-full min-h-full text-xs xl:text-sm font-bold leading-4.5 box-border text-left font-mono text-lime-200"
                     >
                     </div>
                 </div>
@@ -303,36 +303,38 @@ import { SignIn as ClerkSignIn } from "@clerk/astro/components";
         { action: "wait", time: 400, busy: false },
     ];
 
-    const e = document.getElementById("screen") as HTMLElement;
-    const terminal = new TerminalEmulator(e);
+    if (window.innerWidth >= 1024) {
+        const e = document.getElementById("screen") as HTMLElement;
+        const terminal = new TerminalEmulator(e);
 
-    for (const [i, step] of steps.entries()) {
-        if (step.action === "input") {
-            terminal.enterInputQuick(step.value || "");
-        } else if (step.action === "response") {
-            terminal.enterResponse(step.value || "", false);
+        for (const [i, step] of steps.entries()) {
+            if (step.action === "input") {
+                terminal.enterInputQuick(step.value || "");
+            } else if (step.action === "response") {
+                terminal.enterResponse(step.value || "", false);
+            }
+
+            if (i == 23) {
+                break;
+            }
         }
 
-        if (i == 23) {
-            break;
-        }
-    }
+        let i = 24;
+        while (true) {
+            const step = steps[i];
+            if (step.action === "wait") {
+                await terminal.wait(step.time || 0, step.busy);
+            } else if (step.action === "input") {
+                await terminal.enterInput(step.value || "");
+            } else if (step.action === "response") {
+                terminal.enterResponse(step.value || "");
+            }
 
-    let i = 24;
-    while (true) {
-        const step = steps[i];
-        if (step.action === "wait") {
-            await terminal.wait(step.time || 0, step.busy);
-        } else if (step.action === "input") {
-            await terminal.enterInput(step.value || "");
-        } else if (step.action === "response") {
-            terminal.enterResponse(step.value || "");
-        }
-
-        if (i >= steps.length - 1) {
-            i = 0;
-        } else {
-            i++;
+            if (i >= steps.length - 1) {
+                i = 0;
+            } else {
+                i++;
+            }
         }
     }
 </script>
