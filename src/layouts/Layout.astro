@@ -21,14 +21,20 @@ const { title, activeTab } = Astro.props;
     <title>{title}</title>
     <ClientRouter />
   </head>
-  <body class="bg-neutral-900 min-w-dvw min-h-dvh">
+  <body class="bg-neutral-900 min-h-dvh">
     <div class="flex justify-center h-full">
       <div class="flex container h-full">
         <Header active={activeTab} />
-        <main class="flex-1 ml-96 p-8">
+        <main class="flex-1 ml-96 p-8 overflow-x-hidden">
           <slot />
         </main>
       </div>
     </div>
   </body>
 </html>
+
+<style>
+  html {
+    scrollbar-gutter: stable;
+  }
+</style>
