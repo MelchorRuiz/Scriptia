@@ -1,7 +1,12 @@
 import type { APIRoute } from 'astro';
 import { getTask } from '../../../lib/taskManager.js';
 
-export const GET: APIRoute = ({ params }) => {
+export const GET: APIRoute = async ({ locals, params }) => {
+  const user = await locals.currentUser();
+  if (!user) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
   const id = params.id as string;
   const task = getTask(id);
 
