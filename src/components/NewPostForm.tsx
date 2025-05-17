@@ -134,7 +134,7 @@ export default function NewPostForm() {
                 <CodeMirror
                     value={code}
                     theme="dark"
-                    className='*:overflow-x-auto *:nth-2:w-fit *:nth-2:min-w-full'
+                    className='overflow-x-auto *:w-fit *:min-w-full relative -z-10'
                     minHeight='200px'
                     onChange={(val) => setCode(val)}
                     extensions={[langs.shell()]}
@@ -142,13 +142,12 @@ export default function NewPostForm() {
                 />
             </div>
             <div className='mb-3'>
-                <div className="flex w-full">
-                    <div className='bg-gray-700 flex items-center justify-center px-4 text-white text-nowrap rounded-l-lg'>
+                <div className="flex flex-col lg:flex-row w-full">
+                    <div className='bg-gray-700 flex items-center justify-center px-4 text-white text-nowrap lg:rounded-l-lg h-8 lg:h-auto'>
                         ./mi-script.sh
                     </div>
                     <input
                         type="text"
-                        id="search-dropdown"
                         className="block p-2.5 text-sm gray-100 border focus:ring-neutral-500 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:border-neutral-500 focus-visible:outline-none flex-1"
                         placeholder="Parámetros de entrada (opcional) ej: --parametro1 valor1 --parametro2 valor2"
                         value={params}
@@ -156,7 +155,7 @@ export default function NewPostForm() {
                     />
                     <button
                         type="button"
-                        className="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 focus:outline-none rounded-r-lg px-5 cursor-pointer disabled:opacity-50 text-nowrap flex items-center"
+                        className="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 focus:outline-none lg:rounded-r-lg px-5 cursor-pointer disabled:opacity-50 text-nowrap flex items-center justify-center h-8 lg:h-auto"
                         onClick={handleTryCode}
                         disabled={!code || taskId !== null}
                     >
