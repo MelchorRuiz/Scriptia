@@ -38,6 +38,52 @@ export const getPostsByUserId = (userId: string): PostPreviewType[] => {
     return stmt.all(userId, userId, userId) as PostPreviewType[];
 }
 
+export const getPostsLikedByUserId = (userId: string): PostPreviewType[] => {
+    const stmt = db.prepare(`
+        SELECT 
+            p.id, 
+            pv.title, 
+            pv.description, 
+            pv.code, 
+            pv.language,
+            EXISTS (
+                SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
+            ) AS liked,
+            EXISTS (
+                SELECT 1 FROM saved_posts s WHERE s.post_id = p.id AND s.user_id = ?
+            ) AS saved
+        FROM posts p
+        JOIN post_versions pv ON p.id = pv.post_id and pv.created_at = p.last_activity_at
+        JOIN likes l ON l.post_id = p.id
+        WHERE l.user_id = ?
+        ORDER BY p.created_at DESC
+    `);
+    return stmt.all(userId, userId, userId) as PostPreviewType[];
+}
+
+export const getPostsSavedByUserId = (userId: string): PostPreviewType[] => {
+    const stmt = db.prepare(`
+        SELECT
+            p.id,
+            pv.title,
+            pv.description,
+            pv.code,
+            pv.language,
+            EXISTS (
+                SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
+            ) AS liked,
+            EXISTS (
+                SELECT 1 FROM saved_posts s WHERE s.post_id = p.id AND s.user_id = ?
+            ) AS saved
+        FROM posts p
+        JOIN post_versions pv ON p.id = pv.post_id and pv.created_at = p.last_activity_at
+        JOIN saved_posts s ON s.post_id = p.id
+        WHERE s.user_id = ?
+        ORDER BY p.created_at DESC
+    `);
+    return stmt.all(userId, userId, userId) as PostPreviewType[];
+}
+
 export const createPost = async (
     userId: string,
     title: string, 
