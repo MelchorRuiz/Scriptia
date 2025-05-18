@@ -1,5 +1,28 @@
 import type { APIRoute } from 'astro';
-import { createPost } from '../../../lib/posts';
+import { getPosts, createPost } from '../../../lib/posts';
+
+export const GET: APIRoute = async ({ locals, request }) => {
+    try {
+        const user = await locals.currentUser();
+        if (!user) {
+            return new Response('Unauthorized', { status: 401 });
+        }
+        const url = new URL(request.url);
+        const page = parseInt(url.searchParams.get('page') || '1', 10);
+        const limit = parseInt(url.searchParams.get('limit') || '10', 10);
+        const posts = await getPosts(page, limit);
+        const hasMore = posts.length === limit;
+        return new Response(JSON.stringify({ posts, hasMore }), {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        return new Response('Internal Server Error', { status: 500 });
+    }
+};
 
 export const POST: APIRoute = async ({ locals, request }) => {
     try {
