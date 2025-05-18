@@ -1,7 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Search from "../components/Search";
 ---
 
 <Layout title="Scriptia - Explorar" activeTab="explore">
-	
+    <h2 class="text-neutral-300 font-display text-3xl font-bold">EXPLORAR</h2>
+    <p class="text-neutral-500 mb-4">Descubre perfiles y publicaciones</p>
+    <Search client:load />
 </Layout>

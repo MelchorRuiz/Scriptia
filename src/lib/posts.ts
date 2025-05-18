@@ -39,6 +39,29 @@ export const getPosts = (userId: string, page: number, limit: number): PostPrevi
     return stmt.all(userId, userId, limit, offset) as PostPreviewType[];
 }
 
+export const getPostsBySearch = (userId: string, search: string): PostPreviewType[] => {
+    const stmt = db.prepare(`
+        SELECT
+            p.id,
+            pv.title,
+            pv.description,
+            pv.code,
+            pv.language,
+            EXISTS (
+                SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
+            ) AS liked,
+            EXISTS (
+                SELECT 1 FROM saved_posts s WHERE s.post_id = p.id AND s.user_id = ?
+            ) AS saved
+        FROM posts p
+        JOIN post_versions pv ON p.id = pv.post_id and pv.created_at = p.last_activity_at
+        WHERE pv.title LIKE ? OR pv.description LIKE ?
+        ORDER BY p.created_at DESC
+        LIMIT 10
+    `);
+    return stmt.all(userId, userId, `%${search}%`, `%${search}%`) as PostPreviewType[];
+}
+
 export const getPostsByUserId = (userId: string): PostPreviewType[] => {
     const stmt = db.prepare(`
         SELECT 
