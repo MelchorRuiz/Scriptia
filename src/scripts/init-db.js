@@ -24,7 +24,7 @@ function initDB() {
       FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
     );
 
-    CREATE TABLE IF NOT EXISTS reactions (
+    CREATE TABLE IF NOT EXISTS likes (
       post_id INTEGER NOT NULL,
       user_id TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -63,7 +63,7 @@ function initDB() {
     );
   `);
 
-  console.log('Base de datos inicializada correctamente.');
+  console.log('Database initialized successfully.');
 }
 
 initDB();

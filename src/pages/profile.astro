@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PostPreview from "../components/PostPreview.astro";
-import { getNumberOfPostsByUserId } from "../lib/posts";
+import PostPreview from "../components/PostPreview.tsx";
+import { getNumberOfPostsByUserId, getPostsByUserId } from "../lib/posts";
 
 const user = await Astro.locals.currentUser()
 
@@ -19,6 +19,8 @@ const formattedDate = createdAtDate.toLocaleDateString('es-MX', {
 const numberOfPosts: number = getNumberOfPostsByUserId(id)
 const numberOfFollowers: number = 1
 const numberOfLikes: number = 10
+
+const posts = getPostsByUserId(id)
 ---
 
 <Layout title="Scriptia - Mi Perfil" activeTab="profile">
@@ -60,6 +62,15 @@ const numberOfLikes: number = 10
     </div>
   </div>
   <h3 class="text-neutral-300 font-display text-xl lg:text-3xl font-bold mt-4">MIS PUBLICACIONES</h3>
+  {posts.length > 0 ? (
+    <div class="flex flex-col gap-2 mt-4">
+      {posts.map((post) => (
+        <PostPreview post={post} client:visible />
+      ))}
+    </div>
+  ) : (
+    <p class="text-neutral-300 font-display text-lg lg:text-xl mt-4">No tienes publicaciones aún.</p>
+  )}
   <h3 class="text-neutral-300 font-display text-xl lg:text-3xl font-bold mt-4">MIS SEGUIDORES</h3>
   <h3 class="text-neutral-300 font-display text-xl lg:text-3xl font-bold mt-4">MIS SEGUIDOS</h3>
 </Layout>
