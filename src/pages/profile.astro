@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import PostPreview from "../components/PostPreview.tsx";
 import { getNumberOfPostsByUserId, getPostsByUserId } from "../lib/posts";
+import { getNumberOfFollowersByUserId } from "../lib/followers";
+import { getNumberOfLikesByUserId } from "../lib/likes";
 
 const user = await Astro.locals.currentUser()
 
@@ -17,8 +19,8 @@ const formattedDate = createdAtDate.toLocaleDateString('es-MX', {
   day: 'numeric'
 })
 const numberOfPosts: number = getNumberOfPostsByUserId(id)
-const numberOfFollowers: number = 1
-const numberOfLikes: number = 10
+const numberOfFollowers: number = getNumberOfFollowersByUserId(id)
+const numberOfLikes: number = getNumberOfLikesByUserId(id)
 
 const posts = getPostsByUserId(id)
 ---

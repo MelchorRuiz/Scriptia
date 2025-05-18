@@ -3,6 +3,16 @@ import path from 'path';
 
 const db = new Database(path.resolve('data/database.sqlite'), { verbose: console.log });
 
+export const getNumberOfLikesByUserId = (userId: string) => {
+    const stmt = db.prepare(`
+        SELECT COUNT(*) as count FROM likes WHERE post_id IN (
+            SELECT id FROM posts WHERE user_id = ?
+        )
+    `);
+    const row = stmt.get(userId) as { count: number };
+    return row.count;
+}
+
 export const createLike = (userId: string, postId: string) => {
     const stmt = db.prepare(`
         INSERT INTO likes (user_id, post_id) VALUES (?, ?)
