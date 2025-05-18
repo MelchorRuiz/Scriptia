@@ -1,7 +1,7 @@
 ---
 import { UserButton } from "@clerk/astro/components";
 interface Props {
-  active: string;
+    active: string;
 }
 
 const { active } = Astro.props;
@@ -11,8 +11,12 @@ const { active } = Astro.props;
     class="fixed flex flex-col lg:items-end lg:justify-between lg:h-full w-full lg:w-auto lg:min-w-80 border-b-[1px] lg:border-b-0 lg:border-r-[1px] py-6 lg:pr-4 border-neutral-50/60 top-0 left-0 lg:top-auto lg:left-auto bg-neutral-900"
 >
     <nav>
-        <h1 class="text-5xl font-bold text-white text-center font-display">scriptia</h1>
-        <ul class="fixed bottom-0 lg:static flex justify-around lg:flex-col gap-2 py-6 bg-neutral-900 w-full">
+        <h1 class="text-5xl font-bold text-white text-center font-display">
+            scriptia
+        </h1>
+        <ul
+            class="fixed bottom-0 lg:static flex justify-around lg:flex-col gap-2 py-6 bg-neutral-900 w-full"
+        >
             <li>
                 <a
                     href="/"
@@ -24,7 +28,7 @@ const { active } = Astro.props;
                         viewBox="0 0 24 24"
                         stroke-width="1.5"
                         stroke="currentColor"
-                        class="size-12 lg:size-6"
+                        class="size-10 lg:size-6"
                     >
                         <path
                             stroke-linecap="round"
@@ -32,7 +36,34 @@ const { active } = Astro.props;
                             d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
                         ></path>
                     </svg>
-                    <label class="sr-only lg:not-sr-only">Inicio</label>
+                    <label class="sr-only lg:not-sr-only cursor-pointer">
+                        Inicio
+                    </label>
+                </a>
+            </li>
+            <li>
+                <a
+                    href="/explore"
+                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "explore" ? "bg-neutral-50/70 text-neutral-900" : "text-white hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-10 lg:size-6"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                        ></path>
+                    </svg>
+
+                    <label class="sr-only lg:not-sr-only cursor-pointer">
+                        Explorar
+                    </label>
                 </a>
             </li>
             <li>
@@ -54,7 +85,9 @@ const { active } = Astro.props;
                             d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                         ></path>
                     </svg>
-                    <label class="sr-only lg:not-sr-only">Mi perfil</label>
+                    <label class="sr-only lg:not-sr-only cursor-pointer">
+                        Mi perfil
+                    </label>
                 </a>
             </li>
             <li>
@@ -76,7 +109,9 @@ const { active } = Astro.props;
                             d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
                         ></path>
                     </svg>
-                    <label class="sr-only lg:not-sr-only">Guardado</label>
+                    <label class="sr-only lg:not-sr-only cursor-pointer">
+                        Guardado
+                    </label>
                 </a>
             </li>
             <li>
@@ -98,7 +133,9 @@ const { active } = Astro.props;
                             d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
                         ></path>
                     </svg>
-                    <label class="sr-only lg:not-sr-only">Me gusta</label>
+                    <label class="sr-only lg:not-sr-only cursor-pointer">
+                        Me gusta
+                    </label>
                 </a>
             </li>
             <li>
@@ -120,7 +157,9 @@ const { active } = Astro.props;
                             d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                         ></path>
                     </svg>
-                    <label class="sr-only lg:not-sr-only">Nuevo post</label>
+                    <label class="sr-only lg:not-sr-only cursor-pointer">
+                        Nueva publicación
+                    </label>
                 </a>
             </li>
         </ul>
@@ -129,6 +168,6 @@ const { active } = Astro.props;
         <UserButton showName={true} />
     </div>
     <div class="absolute lg:hidden top-4 right-4">
-        <UserButton  />
+        <UserButton />
     </div>
 </header>

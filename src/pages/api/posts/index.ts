@@ -1,35 +1,5 @@
 import type { APIRoute } from 'astro';
-import Database from 'better-sqlite3'
-import path from 'path';
-
-const db = new Database(path.resolve('data/database.sqlite'), { verbose: console.log });
-
-const createPost = async (
-    userId: string,
-    title: string, 
-    description: string, 
-    code: string,
-    language: string,
-) => {
-    const insertPost = db.prepare(`
-        INSERT INTO posts (user_id, created_at, last_activity_at) VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-    `);
-
-    const insertVersion = db.prepare(`
-        INSERT INTO post_versions (post_id, title, description, code, language, created_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-    `);
-
-    const transaction = db.transaction(() => {
-        const result = insertPost.run(userId);
-        const postId = result.lastInsertRowid;
-
-        insertVersion.run(postId, title, description, code, language);
-
-        return postId;
-    });
-
-    return transaction();
-}
+import { createPost } from '../../../lib/posts';
 
 export const POST: APIRoute = async ({ locals, request }) => {
     try {
