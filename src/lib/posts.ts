@@ -16,7 +16,7 @@ export const getNumberOfPostsByUserId = (userId: string) => {
     return row.count;
 }
 
-export const getPosts = (page: number, limit: number): PostPreviewType[] => {
+export const getPosts = (userId: string, page: number, limit: number): PostPreviewType[] => {
     const stmt = db.prepare(`
         SELECT
             p.id,
@@ -36,7 +36,7 @@ export const getPosts = (page: number, limit: number): PostPreviewType[] => {
         LIMIT ? OFFSET ?
     `);
     const offset = (page - 1) * limit;
-    return stmt.all(null, null, limit, offset) as PostPreviewType[];
+    return stmt.all(userId, userId, limit, offset) as PostPreviewType[];
 }
 
 export const getPostsByUserId = (userId: string): PostPreviewType[] => {

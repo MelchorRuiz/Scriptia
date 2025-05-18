@@ -10,7 +10,7 @@ export const GET: APIRoute = async ({ locals, request }) => {
         const url = new URL(request.url);
         const page = parseInt(url.searchParams.get('page') || '1', 10);
         const limit = parseInt(url.searchParams.get('limit') || '10', 10);
-        const posts = await getPosts(page, limit);
+        const posts = await getPosts(user.id, page, limit);
         const hasMore = posts.length === limit;
         return new Response(JSON.stringify({ posts, hasMore }), {
             status: 200,
