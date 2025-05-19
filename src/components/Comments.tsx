@@ -93,7 +93,7 @@ export default function Comments({ postId, comments }: { postId: string, comment
                                         {new Date(comment.created_at).toLocaleString()}
                                     </p>
                                 </div>
-                                <p className="text-gray-200">{comment.content}</p>
+                                <p className="text-gray-200 text-sm">{comment.content}</p>
                             </div>
                         </div>
                     ))

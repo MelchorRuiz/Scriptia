@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
-import { ClientRouter } from 'astro:transitions';
+import SuggestedContent from "../components/SuggestedContent.astro";
+import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 
 interface Props {
@@ -24,8 +25,13 @@ const { title, activeTab } = Astro.props;
   <body class="bg-neutral-900 min-h-dvh">
     <div class="flex justify-center h-full">
       <div class="flex container h-full">
-        <Header active={activeTab} />
-        <main class="flex-1 my-24 lg:my-0 lg:ml-80 p-4 lg:p-8 overflow-x-hidden">
+        <div class="fixed lg:h-dvh flex justify-between container z-50 pointer-events-none">
+          <Header active={activeTab} />
+          <SuggestedContent />
+        </div>
+        <main
+          class="flex-1 my-24 lg:my-0 lg:ml-80 xl:mx-80 p-4 lg:p-8 overflow-x-hidden"
+        >
           <slot />
         </main>
       </div>

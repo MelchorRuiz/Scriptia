@@ -52,7 +52,7 @@ export default function ShowCode({ code }: { code: string }) {
                 <CodeMirror
                     value={code}
                     theme="dark"
-                    className='overflow-x-auto *:w-fit *:min-w-full relative -z-10'
+                    className='overflow-x-auto *:w-fit *:min-w-full relative'
                     minHeight='200px'
                     extensions={[langs.shell()]}
                     editable={false}

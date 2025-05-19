@@ -7,7 +7,6 @@ import { getCommentsByPostId } from "../../lib/comments";
 
 const { id } = Astro.params;
 const post = getPostById(id as string);
-console.log("Post", post);
 if (!post) {
     return Astro.redirect("/");
 }
