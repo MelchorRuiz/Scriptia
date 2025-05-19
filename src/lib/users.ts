@@ -12,6 +12,25 @@ export const getUserById = async (user_id: string): Promise<User> => {
     if (!request.ok) {
         return Promise.reject(new Error('Failed to fetch user'));
     }
-    const { id, username, image_url } = await request.json();
-    return { id, username, image_url };
+    const { id, username, image_url, created_at } = await request.json();
+    return { id, username, image_url, created_at };
+}
+
+export const getUserByUsername = async (u: string): Promise<User | null> => {
+    const request = await fetch(`https://api.clerk.com/v1/users?username_query=${u}`, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${CLERK_SECRET_KEY}`,
+            'Content-Type': 'application/json',
+        },
+    });
+    if (!request.ok) {
+        return null;
+    }
+    const users = await request.json();
+    if (!users || users.length === 0) {
+        return null;
+    }
+    const { id, username, image_url, created_at } = users[0];
+    return { id, username, image_url, created_at };
 }

@@ -1,45 +1,59 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import PostPreview from "../components/PostPreview";
-import { getFollowersByUserId, getFollowingByUserId } from "../lib/followers";
-import { getNumberOfPostsByUserId, getPostsByUserId } from "../lib/posts";
-import { getNumberOfFollowersByUserId } from "../lib/followers";
-import { getNumberOfLikesByUserId } from "../lib/likes";
+import Layout from "../../layouts/Layout.astro";
+import PostPreview from "../../components/PostPreview";
+import FollowButton from "../../components/FollowButton";
+import { getUserByUsername } from "../../lib/users";
+import { getFollowersByUserId, isFollowing } from "../../lib/followers";
+import { getNumberOfPostsByUserId, getPostsByUserId } from "../../lib/posts";
+import { getNumberOfFollowersByUserId } from "../../lib/followers";
+import { getNumberOfLikesByUserId } from "../../lib/likes";
 
-const user = await Astro.locals.currentUser();
+const u = await Astro.locals.currentUser();
 
-if (!user) {
+if (!u) {
   return Astro.redirect("/sign-in");
 }
 
-const { id, username, imageUrl, createdAt } = user;
-const createdAtDate = new Date(createdAt);
+const { username } = Astro.params;
+
+if (username === u.username) {
+  return Astro.redirect("/profile");
+}
+
+const user = await getUserByUsername(username as string);
+
+console.log("user", user);
+if (!user) {
+  return Astro.redirect("/");
+}
+
+const createdAtDate = new Date(user.created_at);
 const formattedDate = createdAtDate.toLocaleDateString("es-MX", {
   year: "numeric",
   month: "long",
   day: "numeric",
 });
-const numberOfPosts: number = getNumberOfPostsByUserId(id);
-const numberOfFollowers: number = getNumberOfFollowersByUserId(id);
-const numberOfLikes: number = getNumberOfLikesByUserId(id);
+const numberOfPosts: number = getNumberOfPostsByUserId(user.id);
+const numberOfFollowers: number = getNumberOfFollowersByUserId(user.id);
+const numberOfLikes: number = getNumberOfLikesByUserId(user.id);
+const isFollowingUser = isFollowing(u.id, user.id);
 
-const posts = getPostsByUserId(id);
-const followers = await getFollowersByUserId(id);
-const following = await getFollowingByUserId(id);
+const posts = getPostsByUserId(user.id);
+const followers = await getFollowersByUserId(user.id);
 ---
 
-<Layout title="Scriptia - Mi Perfil" activeTab="profile">
+<Layout title={`Scriptia - ${user.username}`} activeTab="">
   <div class="flex gap-4 lg:gap-8 ring-1 ring-red-300/60 p-4 rounded-lg">
     <img
       class="size-16 lg:size-24 rounded-full mt-4 lg:mt-0"
-      src={imageUrl}
-      alt={username}
+      src={user.image_url}
+      alt={user.username}
     />
     <div class="flex flex-col gap-2">
       <h2
         class="text-xl lg:text-2xl text-red-400/60 font-bold font-display uppercase"
       >
-        @{username}
+        @{user.username}
       </h2>
       <p class="text-neutral-100 text-sm flex gap-2 items-center">
         <svg
@@ -122,6 +136,11 @@ const following = await getFollowingByUserId(id);
       </div>
     </div>
   </div>
+  <FollowButton
+    userId={user.id}
+    isFollowingInitial={isFollowingUser}
+    client:load
+  />
   <h3
     class="text-indigo-400 font-display text-xl lg:text-2xl font-bold mt-4 uppercase"
   >
@@ -135,13 +154,15 @@ const following = await getFollowingByUserId(id);
         ))}
       </div>
     ) : (
-      <p class="text-neutral-300 text-lg mt-4">No tienes publicaciones aún.</p>
+      <p class="text-neutral-300 text-lg mt-4">
+        Este usuario aún no ha publicado nada.
+      </p>
     )
   }
   <h3
     class="text-indigo-400 font-display text-xl lg:text-2xl font-bold mt-4 uppercase"
   >
-    Mis seguidores
+    Seguidores
   </h3>
   {
     followers.length > 0 ? (
@@ -175,47 +196,7 @@ const following = await getFollowingByUserId(id);
         ))}
       </ul>
     ) : (
-      <p class="text-neutral-300 text-lg mt-4">No tienes seguidores aún.</p>
-    )
-  }
-  <h3
-    class="text-indigo-400 font-display text-xl lg:text-2xl font-bold mt-4 uppercase"
-  >
-    Mis seguidos
-  </h3>
-  {
-    following.length > 0 ? (
-      <ul class="flex flex-col gap-2 mt-4">
-        {following.map((followed) => (
-          <li class="flex items-center p-2 ring-1 ring-neutral-100/80 rounded-md bg-neutral-800/80 hover:bg-neutral-700/60 transition-all duration-200">
-            <a
-              href={`/user/${followed.username}`}
-              class="text-neutral-100 w-full flex justify-between items-center"
-            >
-              <div class="flex items-center gap-2">
-                <img
-                  src={followed.image_url}
-                  alt={followed.username}
-                  class="rounded-full size-10"
-                />
-                <div>
-                  <h4 class="font-semibold">@{user.username}</h4>
-                  <p class="text-neutral-400 text-sm">
-                    Lo sigues desde el{" "}
-                    {new Date(followed.created_at).toLocaleDateString("es-MX", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-            </a>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p class="text-neutral-300 text-lg mt-4">No sigues a nadie aún.</p>
+      <p class="text-neutral-300 text-lg mt-4">Este usuario aún no tiene seguidores.</p>
     )
   }
 </Layout>
