@@ -118,7 +118,7 @@ export default function NewPostForm() {
                 <input
                     type="text"
                     id="title"
-                    className="border rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-neutral-500 focus:border-neutral-500 focus-visible:outline-none text-sm"
+                    className="border rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-neutral-100 focus:ring-neutral-500 focus:border-neutral-500 focus-visible:outline-none text-sm"
                     placeholder="Escribe un título..."
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -134,7 +134,7 @@ export default function NewPostForm() {
                 <textarea
                     id="description"
                     rows={2}
-                    className="block p-2.5 w-full rounded-lg border bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-neutral-500 focus:border-neutral-500 focus-visible:outline-none text-sm"
+                    className="block p-2.5 w-full rounded-lg border bg-gray-700 border-gray-600 placeholder-gray-400 text-neutral-100 focus:ring-neutral-500 focus:border-neutral-500 focus-visible:outline-none text-sm"
                     placeholder="Escribe algo..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -150,7 +150,7 @@ export default function NewPostForm() {
                 </div>
                 <select
                     id="language"
-                    className="block p-2.5 w-full rounded-lg border bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-neutral-500 focus:border-neutral-500 focus-visible:outline-none text-sm"
+                    className="block p-2.5 w-full rounded-lg border bg-gray-700 border-gray-600 placeholder-gray-400 text-neutral-100 focus:ring-neutral-500 focus:border-neutral-500 focus-visible:outline-none text-sm"
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
                 >
@@ -174,7 +174,7 @@ export default function NewPostForm() {
                 <div className='flex flex-col gap-2'>
                     {dependecies.map((dependency, index) => (
                         <div key={index} className="flex flex-col lg:flex-row w-full">
-                            <div className='bg-gray-700 flex items-center justify-center px-4 text-white text-nowrap lg:rounded-l-lg h-8 lg:h-auto text-sm'>
+                            <div className='bg-gray-700 flex items-center justify-center px-4 text-neutral-100 text-nowrap lg:rounded-l-lg h-8 lg:h-auto text-sm'>
                                 {language === 'python' ? 'pip install' :
                                     language === 'nodejs' ? 'npm install' :
                                         language === 'ubuntu' ? 'apt-get install' :
@@ -183,14 +183,14 @@ export default function NewPostForm() {
                             </div>
                             <input
                                 type="text"
-                                className="block p-2.5 text-sm gray-100 border bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus-visible:outline-none flex-1"
+                                className="block p-2.5 text-sm gray-100 border bg-gray-700 border-gray-600 placeholder-gray-400 text-neutral-100 focus-visible:outline-none flex-1"
                                 placeholder="Escribe una dependencia..."
                                 value={dependency}
                                 onChange={(e) => handleDependenciesChange(index, e.target.value)}
                             />
                             <button
                                 type="button"
-                                className="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 focus:outline-none lg:rounded-r-lg px-5 cursor-pointer disabled:opacity-50 text-nowrap flex items-center justify-center h-8 lg:h-auto text-sm"
+                                className="text-gray-900 bg-gradient-to-r hover:bg-gradient-to-br from-red-300 via-red-300 to-red-400 focus:outline-none lg:rounded-r-lg px-5 cursor-pointer disabled:opacity-50 text-nowrap flex items-center justify-center h-8 lg:h-auto text-sm"
                                 onClick={() => handleRemoveDependency(index)}
                             >
                                 Eliminar
@@ -227,7 +227,7 @@ export default function NewPostForm() {
                     </div>
                     <div>
                         <p className='text-yellow-700 font-bold'>Advertencia</p>
-                        <p className='text-neutral-200 text-sm'>
+                        <p className='text-neutral-100 text-sm'>
                             El código se ejecuta en un contenedor Docker aislado. No tiene acceso a recursos del sistema como namespaces, dispositivos o archivos externos, ni consola interactiva (no se puede usar input() en Python). Sin embargo, sí cuenta con acceso a internet. Ten esto en cuenta al ejecutar tu código.
                         </p>
                     </div>
@@ -235,12 +235,12 @@ export default function NewPostForm() {
             </div>
             <div className='mb-3'>
                 <div className="flex flex-col lg:flex-row w-full">
-                    <div className='bg-gray-700 flex items-center justify-center px-4 text-white text-nowrap lg:rounded-l-lg h-8 lg:h-auto'>
+                    <div className='bg-gray-700 flex items-center justify-center px-4 text-neutral-100 text-nowrap lg:rounded-l-lg h-8 lg:h-auto'>
                         ./mi-script.sh
                     </div>
                     <input
                         type="text"
-                        className="block p-2.5 text-sm gray-100 border focus:ring-neutral-500 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:border-neutral-500 focus-visible:outline-none flex-1"
+                        className="block p-2.5 text-sm gray-100 border focus:ring-neutral-500 bg-gray-700 border-gray-600 placeholder-gray-400 text-neutral-100 focus:border-neutral-500 focus-visible:outline-none flex-1"
                         placeholder="Parámetros de entrada (opcional) ej: --parametro1 valor1 --parametro2 valor2"
                         value={params}
                         onChange={(e) => setParams(e.target.value)}
@@ -262,10 +262,10 @@ export default function NewPostForm() {
                         {taskStatus === 'queued' || (taskStatus === "running" && taskOutput === "") ? (
                             <div className='flex flex-col items-center justify-center py-4'>
                                 <svg className='size-20' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150"><path fill="none" stroke="#FFFFFF" strokeWidth="15" strokeLinecap="round" strokeDasharray="300 385" strokeDashoffset="0" d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z"><animate attributeName="stroke-dashoffset" calcMode="spline" dur="2" values="685;-685" keySplines="0 0 1 1" repeatCount="indefinite"></animate></path></svg>
-                                <p className="text-white text-sm">Esperando a que se ejecute el código...</p>
+                                <p className="text-neutral-100 text-sm">Esperando a que se ejecute el código...</p>
                             </div>
                         ) : (
-                            <pre className="text-white text-sm max-h-96 overflow-y-auto">{taskOutput}</pre>
+                            <pre className="text-neutral-100 text-sm max-h-96 overflow-y-auto">{taskOutput}</pre>
                         )}
                     </div>
                 </div>

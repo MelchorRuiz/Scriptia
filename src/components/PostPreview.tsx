@@ -38,11 +38,11 @@ export default function PostPreview({ post }: PostPreviewProps) {
     };
 
     return (
-        <a href={`/post/${id}`} className="text-white ring-2 ring-gray-700 rounded-lg p-4 flex flex-col gap-2 max-h-64 overflow-y-hidden relative pb-16">
-            <h3 className="text-xl font-bold">
+        <a href={`/post/${id}`} className="text-neutral-100 ring-2 ring-gray-700 rounded-lg p-4 flex flex-col gap-2 max-h-64 overflow-y-hidden relative pb-16">
+            <h3 className="text-xl font-bold text-indigo-300">
                 {title}
             </h3>
-            <p className="text-base text-gray-400">
+            <p className="text-base text-neutral-300">
                 {description}
             </p>
             <CodeMirror
@@ -57,7 +57,7 @@ export default function PostPreview({ post }: PostPreviewProps) {
             />
             <div className='flex justify-around gap-4 mt-2 absolute bottom-0 left-0 right-0 py-2 w-full bg-neutral-900'>
                 <button className='flex items-center justify-center gap-2 p-2 hover:ring-1 cursor-pointer rounded-lg' onClick={handleLike}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-6 ${like ? 'text-red-600 fill-red-600' : 'text-white fill-neutral-900'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-6 ${like ? 'text-red-600 fill-red-600' : 'text-neutral-100 fill-neutral-900'}`}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                     </svg>
                     <label className='sr-only lg:not-sr-only cursor-pointer text-sm'>Me gusta</label>
@@ -69,7 +69,7 @@ export default function PostPreview({ post }: PostPreviewProps) {
                     <label className='sr-only lg:not-sr-only cursor-pointer text-sm'>Comentarios</label>
                 </button>
                 <button className='flex items-center justify-center gap-2 p-2 hover:ring-1 cursor-pointer rounded-lg' onClick={handleSave}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-6 ${save ? 'text-yellow-400 fill-yellow-400' : 'text-white fill-neutral-900'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-6 ${save ? 'text-yellow-400 fill-yellow-400' : 'text-neutral-100 fill-neutral-900'}`}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
                     </svg>
                     <label className='sr-only lg:not-sr-only cursor-pointer text-sm'>Guardar</label>

@@ -21,7 +21,7 @@ export function ConfirmModal({
                         Seguir editando
                     </button>
                     <button
-                        className="bg-neutral-900 text-white px-4 py-2 rounded flex-1 cursor-pointer"
+                        className="bg-neutral-900 text-neutral-100 px-4 py-2 rounded flex-1 cursor-pointer"
                         onClick={onConfirm}
                     >
                         Publicar
@@ -47,7 +47,7 @@ export function CongratulationModal({
                 <p className="mt-2">Tu script ha sido publicado con éxito.</p>
                 <div className="mt-4 flex justify-end">
                     <button
-                        className="bg-neutral-900 text-white px-4 py-2 rounded flex-1 cursor-pointer"
+                        className="bg-neutral-900 text-neutral-100 px-4 py-2 rounded flex-1 cursor-pointer"
                         onClick={onClose}
                     >
                         Cerrar

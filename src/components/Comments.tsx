@@ -56,7 +56,7 @@ export default function Comments({ postId, comments }: { postId: string, comment
                     <textarea
                         id="comment"
                         rows={2}
-                        className="block p-2.5 w-full rounded-lg border bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-neutral-500 focus:border-neutral-500 focus-visible:outline-none"
+                        className="block p-2.5 w-full rounded-lg border bg-gray-700 border-gray-600 placeholder-gray-400 text-neutral-100 focus:ring-neutral-500 focus:border-neutral-500 focus-visible:outline-none"
                         placeholder="Escribe algo..."
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
@@ -86,19 +86,19 @@ export default function Comments({ postId, comments }: { postId: string, comment
                             />
                             <div className="w-full">
                                 <div className="flex flex-col lg:flex-row justify-between w-full">
-                                    <p className="text-gray-300">
+                                    <p className="text-neutral-300">
                                         <strong>@{comment.user.username}</strong>
                                     </p>
-                                    <p className="text-gray-400 text-sm">
+                                    <p className="text-neutral-400 text-sm">
                                         {new Date(comment.created_at).toLocaleString()}
                                     </p>
                                 </div>
-                                <p className="text-gray-200 text-sm">{comment.content}</p>
+                                <p className="text-neutral-100 text-sm">{comment.content}</p>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <p className="text-gray-400">No hay comentarios aún.</p>
+                    <p className="text-neutral-400">No hay comentarios aún.</p>
                 )}
             </div>
         </div>

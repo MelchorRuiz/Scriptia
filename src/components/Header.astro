@@ -11,7 +11,7 @@ const { active } = Astro.props;
     class="flex flex-col lg:items-end lg:justify-between lg:h-full w-full lg:w-80 border-b-[1px] lg:border-b-0 lg:border-r-[1px] py-6 lg:pr-4 border-neutral-50/60 top-0 left-0 lg:top-auto lg:left-auto bg-neutral-900 pointer-events-auto"
 >
     <nav>
-        <h1 class="text-4xl font-bold text-white text-center font-display">
+        <h1 class="shadow-dance-text text-4xl font-bold text-neutral-100 text-center font-display">
             scriptia
         </h1>
         <ul
@@ -20,7 +20,7 @@ const { active } = Astro.props;
             <li>
                 <a
                     href="/"
-                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "home" ? "bg-neutral-50/70 text-neutral-900" : "text-white hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
+                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "home" ? "bg-neutral-50/70 text-neutral-900" : "text-neutral-100 hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +44,7 @@ const { active } = Astro.props;
             <li>
                 <a
                     href="/explore"
-                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "explore" ? "bg-neutral-50/70 text-neutral-900" : "text-white hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
+                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "explore" ? "bg-neutral-50/70 text-neutral-900" : "text-neutral-100 hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -69,7 +69,7 @@ const { active } = Astro.props;
             <li>
                 <a
                     href="/profile"
-                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "profile" ? "bg-neutral-50/70 text-neutral-900" : "text-white hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
+                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "profile" ? "bg-neutral-50/70 text-neutral-900" : "text-neutral-100 hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +93,7 @@ const { active } = Astro.props;
             <li>
                 <a
                     href="/saved"
-                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "saved" ? "bg-neutral-50/70 text-neutral-900" : "text-white hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
+                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "saved" ? "bg-neutral-50/70 text-neutral-900" : "text-neutral-100 hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -117,7 +117,7 @@ const { active } = Astro.props;
             <li>
                 <a
                     href="/likes"
-                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "likes" ? "bg-neutral-50/70 text-neutral-900" : "text-white hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
+                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "likes" ? "bg-neutral-50/70 text-neutral-900" : "text-neutral-100 hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -141,7 +141,7 @@ const { active } = Astro.props;
             <li>
                 <a
                     href="/new-post"
-                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "new-post" ? "bg-neutral-50/70 text-neutral-900" : "text-white hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
+                    class=`flex gap-2 font-semibold p-2 rounded-2xl ${active === "new-post" ? "bg-neutral-50/70 text-neutral-900" : "text-neutral-100 hover:bg-neutral-50/70 hover:text-neutral-900 transition-colors duration-100"}`
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -171,3 +171,19 @@ const { active } = Astro.props;
         <UserButton />
     </div>
 </header>
+
+<style>
+    .shadow-dance-text {
+        text-shadow: 5px 5px 0 var(--color-red-600), 10px 10px 0 var(--color-indigo-400);
+        animation: shadow-dance 2s infinite;
+    }
+
+    @keyframes shadow-dance {
+        0%, 100% {
+            text-shadow: 5px 5px 0 var(--color-red-600), 10px 10px 0 var(--color-indigo-400);
+        }
+        50% {
+            text-shadow: -5px -5px 0 var(--color-indigo-400), -10px -10px 0 var(--color-red-600);
+        }
+    }
+</style>
