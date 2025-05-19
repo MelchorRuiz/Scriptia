@@ -1,3 +1,78 @@
-<section class="hidden xl:block w-80 py-6 pl-4 border-l-[1px] border-neutral-50/60 pointer-events-auto">
-    <h3 class="text-white text-left">Contenido sugerido</h3>
+---
+import { getPostsMostLiked } from "../lib/posts";
+import { getMoreFollowedUsers } from "../lib/followers";
+
+const users = await getMoreFollowedUsers();
+---
+
+<section
+    class="hidden xl:block w-80 py-6 pl-4 border-l-[1px] border-neutral-50/60 pointer-events-auto"
+>
+    <div class="w-9/12">
+        <h3 class="text-neutral-300 text-lg font-bold mb-4">
+            Usuarios más seguidos
+        </h3>
+        <ul class="flex flex-col gap-2 mb-2">
+            {
+                users.map(async (user) => (
+                    <li class="flex items-center p-2 ring-1 ring-neutral-100/80 rounded-md bg-neutral-800/80 hover:bg-neutral-700/60 transition-all duration-200">
+                        <a
+                            href={`/user/${user.username}`}
+                            class="text-neutral-200 w-full flex justify-between items-center"
+                        >
+                            <div class="flex items-center gap-2">
+                                <img
+                                    src={user.image_url}
+                                    alt={user.username}
+                                    class="rounded-full size-10"
+                                />
+                                <div>
+                                    <h4 class="font-semibold">@{user.username}</h4>
+                                    <p class="text-neutral-400 text-sm">
+                                        {user.followers}{user.followers === 1 ? " seguidor" : " seguidores"}
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+        <h3 class="text-neutral-300 text-lg font-bold">
+            Publicaciones más populares
+        </h3>
+        <ul class="mt-2 flex flex-col gap-2">
+            {
+                getPostsMostLiked().map(async (post) => (
+                    <li class="flex items-center p-2 ring-1 ring-neutral-100/80 rounded-md bg-neutral-800/80 hover:bg-neutral-700/60 transition-all duration-200">
+                        <a
+                            href={`/post/${post.id}`}
+                            class="text-neutral-200 w-full flex justify-between items-center"
+                        >
+                            <div>
+                                <h4 class="font-semibold">{post.title}</h4>
+                                <p class="text-sm">● {post.language}</p>
+                            </div>
+                            <div class="text-xl flex items-center">
+                                {post.likes}
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    class="size-5 fill-red-600 text-red-600"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                                    />
+                                </svg>
+                            </div>
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
 </section>

@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3'
 import path from 'path';
-import type { PostPreviewType } from '../types/Post';
+import type { PostPreviewType, PostMiniPreviewType } from '../types/Post';
 
 const db = new Database(path.resolve('data/database.sqlite'), { verbose: console.log });
 
@@ -126,6 +126,23 @@ export const getPostsLikedByUserId = (userId: string): PostPreviewType[] => {
         ORDER BY p.created_at DESC
     `);
     return stmt.all(userId, userId, userId) as PostPreviewType[];
+}
+
+export const getPostsMostLiked = (): PostMiniPreviewType[] => {
+    const stmt = db.prepare(`
+        SELECT 
+            p.id, 
+            pv.title, 
+            pv.language, 
+            COUNT(l.post_id) as likes
+        FROM posts p
+        JOIN post_versions pv ON p.id = pv.post_id and pv.created_at = p.last_activity_at
+        LEFT JOIN likes l ON l.post_id = p.id
+        GROUP BY p.id, pv.title, pv.language
+        ORDER BY likes DESC, p.created_at DESC
+        LIMIT 3
+    `);
+    return stmt.all() as PostMiniPreviewType[];
 }
 
 export const getPostsSavedByUserId = (userId: string): PostPreviewType[] => {

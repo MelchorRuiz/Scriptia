@@ -7,3 +7,10 @@ export interface PostPreviewType {
     liked: boolean;
     saved: boolean;
 }
+
+export interface PostMiniPreviewType {
+    id: string;
+    title: string;
+    language: string;
+    likes: number;
+}
