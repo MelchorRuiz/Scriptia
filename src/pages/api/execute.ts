@@ -8,8 +8,8 @@ export const POST: APIRoute = async ({ locals, request }) => {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const { code, params } = await request.json();
-  if (!code) {
+  const { language, dependecies, code, params } = await request.json();
+  if (!language || !dependecies || !code) {
     return new Response(JSON.stringify({ error: 'No code provided' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
@@ -17,7 +17,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
   }
 
   const { id } = createTask();
-  queue.add(() => runTask(id, code, params));
+  queue.add(() => runTask(id, code, params, language, dependecies))
 
   return new Response(JSON.stringify({ taskId: id }), {
     headers: { 'Content-Type': 'application/json' },

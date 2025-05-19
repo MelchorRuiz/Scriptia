@@ -5,6 +5,11 @@ import Comments from "../../components/Comments";
 import { getPostById } from "../../lib/posts";
 import { getCommentsByPostId } from "../../lib/comments";
 
+import Python from "../../components/icons/Python.astro";
+import NodeJs from "../../components/icons/NodeJs.astro";
+import Ubuntu from "../../components/icons/Ubuntu.astro";
+import Alpine from "../../components/icons/Alpine.astro";
+
 const { id } = Astro.params;
 const post = getPostById(id as string);
 if (!post) {
@@ -15,11 +20,33 @@ const comments = await getCommentsByPostId(id as string);
 ---
 
 <Layout title="Scriptia - Publicación" activeTab="post">
-    <h2 class="text-neutral-300 font-display text-4xl font-bold uppercase">{post.title}</h2>
-    <p class="text-neutral-500 mb-4">{post.description}</p>
-    <ShowCode code={post.code} client:load />
-    <h4 class="text-neutral-300 text-2xl font-bold my-4">
-        Comentarios:
-    </h4>
+    <h2 class="text-neutral-300 font-display text-4xl font-bold uppercase mb-4">
+        {post.title}
+    </h2>
+    <div class="flex items-center gap-4 mb-4">
+        <div>
+            {
+                post.language === "python" ? (
+                    <Python class="size-12" />
+                ) : post.language === "nodejs" ? (
+                    <NodeJs class="size-12" />
+                ) : post.language === "ubuntu" ? (
+                    <Ubuntu class="size-12" />
+                ) : post.language === "alpine" ? (
+                    <Alpine class="size-12" />
+                ) : null
+            }
+        </div>
+        <div>
+            <p class="text-neutral-500 mb-4">{post.description}</p>
+        </div>
+    </div>
+    <ShowCode
+        language={post.language}
+        dependecies={post.dependencies}
+        code={post.code}
+        client:load
+    />
+    <h4 class="text-neutral-300 text-2xl font-bold my-4">Comentarios:</h4>
     <Comments postId={post.id} comments={comments} client:load />
 </Layout>

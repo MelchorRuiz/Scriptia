@@ -2,6 +2,17 @@ import Database from 'better-sqlite3'
 import path from 'path';
 import type { PostPreviewType, PostMiniPreviewType } from '../types/Post';
 
+interface PostRow {
+    id: string;
+    title: string;
+    description: string;
+    code: string;
+    language: string;
+    dependencies: string;
+    liked: boolean;
+    saved: boolean;
+}
+
 const db = new Database(path.resolve('data/database.sqlite'), { verbose: console.log });
 
 export const checkIfPostExists = (postId: string) => {
@@ -24,6 +35,7 @@ export const getPosts = (userId: string, page: number, limit: number): PostPrevi
             pv.description,
             pv.code,
             pv.language,
+            pv.dependencies,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -36,7 +48,11 @@ export const getPosts = (userId: string, page: number, limit: number): PostPrevi
         LIMIT ? OFFSET ?
     `);
     const offset = (page - 1) * limit;
-    return stmt.all(userId, userId, limit, offset) as PostPreviewType[];
+    const posts = stmt.all(userId, userId, limit, offset) as PostRow[];
+    return posts.map(post => ({
+        ...post,
+        dependencies: post.dependencies ? post.dependencies.split(',') : [],
+    }));
 }
 
 export const getPostById = (postId: string): PostPreviewType | null => {
@@ -47,6 +63,7 @@ export const getPostById = (postId: string): PostPreviewType | null => {
             pv.description, 
             pv.code, 
             pv.language,
+            pv.dependencies,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -57,7 +74,13 @@ export const getPostById = (postId: string): PostPreviewType | null => {
         JOIN post_versions pv ON p.id = pv.post_id and pv.created_at = p.last_activity_at
         WHERE p.id = ?
     `);
-    return stmt.get(postId, postId, postId) as PostPreviewType;
+    const post = stmt.get(postId, postId, postId) as PostRow ;
+    if (!post) return null;
+    return {
+        ...post,
+        dependencies: post.dependencies ? post.dependencies.split(',') : [],
+    };
+
 }
 
 export const getPostsBySearch = (userId: string, search: string): PostPreviewType[] => {
@@ -68,6 +91,7 @@ export const getPostsBySearch = (userId: string, search: string): PostPreviewTyp
             pv.description,
             pv.code,
             pv.language,
+            pv.dependencies,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -80,7 +104,11 @@ export const getPostsBySearch = (userId: string, search: string): PostPreviewTyp
         ORDER BY p.created_at DESC
         LIMIT 10
     `);
-    return stmt.all(userId, userId, `%${search}%`, `%${search}%`) as PostPreviewType[];
+    const posts = stmt.all(userId, userId, `%${search}%`, `%${search}%`) as PostRow[];
+    return posts.map(post => ({
+        ...post,
+        dependencies: post.dependencies ? post.dependencies.split(',') : [],
+    }));
 }
 
 export const getPostsByUserId = (userId: string): PostPreviewType[] => {
@@ -91,6 +119,7 @@ export const getPostsByUserId = (userId: string): PostPreviewType[] => {
             pv.description, 
             pv.code, 
             pv.language,
+            pv.dependencies,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -102,7 +131,11 @@ export const getPostsByUserId = (userId: string): PostPreviewType[] => {
         WHERE p.user_id = ?
         ORDER BY p.created_at DESC
     `);
-    return stmt.all(userId, userId, userId) as PostPreviewType[];
+    const posts = stmt.all(userId, userId, userId) as PostRow[];
+    return posts.map(post => ({
+        ...post,
+        dependencies: post.dependencies ? post.dependencies.split(',') : [],
+    }));
 }
 
 export const getPostsLikedByUserId = (userId: string): PostPreviewType[] => {
@@ -113,6 +146,7 @@ export const getPostsLikedByUserId = (userId: string): PostPreviewType[] => {
             pv.description, 
             pv.code, 
             pv.language,
+            pv.dependencies,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -125,7 +159,11 @@ export const getPostsLikedByUserId = (userId: string): PostPreviewType[] => {
         WHERE l.user_id = ?
         ORDER BY p.created_at DESC
     `);
-    return stmt.all(userId, userId, userId) as PostPreviewType[];
+    const posts = stmt.all(userId, userId, userId) as PostRow[];
+    return posts.map(post => ({
+        ...post,
+        dependencies: post.dependencies ? post.dependencies.split(',') : [],
+    }));
 }
 
 export const getPostsMostLiked = (): PostMiniPreviewType[] => {
@@ -153,6 +191,7 @@ export const getPostsSavedByUserId = (userId: string): PostPreviewType[] => {
             pv.description,
             pv.code,
             pv.language,
+            pv.dependencies,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -165,7 +204,11 @@ export const getPostsSavedByUserId = (userId: string): PostPreviewType[] => {
         WHERE s.user_id = ?
         ORDER BY p.created_at DESC
     `);
-    return stmt.all(userId, userId, userId) as PostPreviewType[];
+    const posts = stmt.all(userId, userId, userId) as PostRow[];
+    return posts.map(post => ({
+        ...post,
+        dependencies: post.dependencies ? post.dependencies.split(',') : [],
+    }));
 }
 
 export const createPost = async (
@@ -174,20 +217,22 @@ export const createPost = async (
     description: string, 
     code: string,
     language: string,
+    dependencies: string[]
 ) => {
     const insertPost = db.prepare(`
         INSERT INTO posts (user_id, created_at, last_activity_at) VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `);
 
     const insertVersion = db.prepare(`
-        INSERT INTO post_versions (post_id, title, description, code, language, created_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        INSERT INTO post_versions (post_id, title, description, code, language, dependencies, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     `);
 
     const transaction = db.transaction(() => {
         const result = insertPost.run(userId);
         const postId = result.lastInsertRowid;
 
-        insertVersion.run(postId, title, description, code, language);
+        insertVersion.run(postId, title, description, code, language, dependencies.join(','),);
 
         return postId;
     });

@@ -31,12 +31,12 @@ export const POST: APIRoute = async ({ locals, request }) => {
             return new Response('Unauthorized', { status: 401 });
         }
         
-        const { title, description, code } = await request.json();
-        if (!title || !description || !code) {
+        const { title, description, language, dependecies, code } = await request.json();
+        if (!title || !description || !code || !language || !dependecies) {
             return new Response('Bad Request', { status: 400 });
         }
 
-        const postId = await createPost(user.id, title, description, code, 'alpine');
+        const postId = await createPost(user.id, title, description, code, language, dependecies);
 
         return new Response(JSON.stringify({ postId }), {
             status: 201,

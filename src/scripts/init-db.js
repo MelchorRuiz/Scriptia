@@ -1,7 +1,14 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import fs from 'fs';
 
 const dbPath = path.resolve('data/database.sqlite');
+
+if (!fs.existsSync(dbPath)) {
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  fs.writeFileSync(dbPath, '');
+}
+
 const db = new Database(dbPath);
 
 function initDB() {
@@ -20,6 +27,7 @@ function initDB() {
       description TEXT,
       code TEXT NOT NULL,
       language TEXT,
+      dependencies TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
     );

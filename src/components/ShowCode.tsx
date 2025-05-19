@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
-import { langs } from '@uiw/codemirror-extensions-langs';
+import { loadLanguage } from '@uiw/codemirror-extensions-langs';
 
-export default function ShowCode({ code }: { code: string }) {
+interface ShowCodeProps {
+    language: string;
+    dependecies: string[];
+    code: string;
+}
+
+export default function ShowCode({ language, dependecies, code }: ShowCodeProps) {
     const [params, setParams] = useState("");
     const [taskId, setTaskId] = useState(null);
     const [taskStatus, setTaskStatus] = useState(null);
@@ -15,7 +21,7 @@ export default function ShowCode({ code }: { code: string }) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code, params }),
+                body: JSON.stringify({ language, dependecies, code, params }),
             });
 
             const data = await response.json();
@@ -48,13 +54,31 @@ export default function ShowCode({ code }: { code: string }) {
 
     return (
         <div className="overflow-x-auto">
+            <div className='flex flex-col gap-2 mb-3'>
+                {dependecies.map((dependency, index) => (
+                    <div key={index} className="flex flex-col lg:flex-row w-full">
+                        <div className='bg-gray-700 flex items-center justify-center px-4 text-white text-nowrap lg:rounded-l-lg h-8 lg:h-auto text-sm'>
+                            {language === 'python' ? 'pip install' :
+                                language === 'nodejs' ? 'npm install' :
+                                    language === 'ubuntu' ? 'apt-get install' :
+                                        language === 'alpine' ? 'apk add' : ''
+                            }
+                        </div>
+                        <p className="block p-2.5 text-sm gray-100 border bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus-visible:outline-none flex-1">
+                            {dependency}
+                        </p>
+                    </div>
+                ))}
+            </div>
             <div className="mb-3">
                 <CodeMirror
                     value={code}
                     theme="dark"
                     className='overflow-x-auto *:w-fit *:min-w-full relative'
                     minHeight='200px'
-                    extensions={[langs.shell()]}
+                    extensions={([loadLanguage(
+                        language === 'python' ? 'python' : language === 'nodejs' ? 'javascript' : 'shell',
+                    )] as NonNullable<ReturnType<typeof loadLanguage>>[])}
                     editable={false}
                     basicSetup={{ searchKeymap: false, foldGutter: false }}
                 />
@@ -85,10 +109,10 @@ export default function ShowCode({ code }: { code: string }) {
                 <div className="mb-3">
                     <label className="block mb-2 font-medium text-neutral-300">Salida</label>
                     <div className="bg-gray-700 p-4 rounded-lg">
-                        {taskStatus === 'queued' ? (
+                        {taskStatus === 'queued' || (taskStatus === "running" && taskOutput === "") ? (
                             <div className='flex flex-col items-center justify-center py-4'>
                                 <svg className='size-20' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150"><path fill="none" stroke="#FFFFFF" strokeWidth="15" strokeLinecap="round" strokeDasharray="300 385" strokeDashoffset="0" d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z"><animate attributeName="stroke-dashoffset" calcMode="spline" dur="2" values="685;-685" keySplines="0 0 1 1" repeatCount="indefinite"></animate></path></svg>
-                                <p className="text-white text-sm">Esperando a que el contenedor se inicie...</p>
+                                <p className="text-white text-sm">Esperando a que se ejecute el código...</p>
                             </div>
                         ) : (
                             <pre className="text-white text-sm max-h-96 overflow-y-auto">{taskOutput}</pre>

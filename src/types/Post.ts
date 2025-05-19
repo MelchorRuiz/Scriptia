@@ -4,6 +4,7 @@ export interface PostPreviewType {
     description: string;
     code: string;
     language: string;
+    dependencies: string[];
     liked: boolean;
     saved: boolean;
 }
