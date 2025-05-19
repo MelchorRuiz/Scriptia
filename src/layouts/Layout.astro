@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import SuggestedContent from "../components/SuggestedContent.astro";
+import { Pet } from "../components/Pet";
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 
@@ -37,6 +38,7 @@ const { title, activeTab } = Astro.props;
       </div>
     </div>
   </body>
+  <Pet client:only="react" />
 </html>
 
 <style>
@@ -44,3 +46,18 @@ const { title, activeTab } = Astro.props;
     scrollbar-gutter: stable;
   }
 </style>
+
+<script is:inline data-astro-rerun src="https://res.cloudinary.com/veseylab/raw/upload/v1684982764/magicmouse-2.0.0.cdn.min.js"></script>
+<script is:inline>
+  const options = {
+    "outerStyle": "circle",
+    "hoverEffect": "circle-move",
+    "hoverItemMove": true,
+    "defaultCursor": false,
+    "outerWidth": 30,
+    "outerHeight": 30
+  }
+</script>
+<script is:inline data-astro-rerun>
+  magicMouse(options);
+</script>

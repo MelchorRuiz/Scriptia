@@ -20,3 +20,16 @@ const { title } = Astro.props;
     <slot />
 </body>
 </html>
+
+<script is:inline src="https://res.cloudinary.com/veseylab/raw/upload/v1684982764/magicmouse-2.0.0.cdn.min.js"></script>
+<script is:inline>
+  const options = {
+    "outerStyle": "circle",
+    "hoverEffect": "circle-move",
+    "hoverItemMove": true,
+    "defaultCursor": false,
+    "outerWidth": 30,
+    "outerHeight": 30
+  }
+  magicMouse(options);
+</script>
