@@ -18,12 +18,11 @@ export const getFollowersByUserId = async (userId: string): Promise<User[]> => {
         SELECT follower_id as user_id, created_at FROM follows WHERE followed_id = ?
     `);
     const rows = stmt.all(userId) as { user_id: string, created_at: string }[];
-    const users: User[] = [];
-    for (const row of rows) {
+    const users = await Promise.all(rows.map(async (row) => {
         const user = await getUserById(row.user_id);
         user.created_at = row.created_at;
-        users.push(user);
-    }
+        return user;
+    }));
     return users;
 }
 
@@ -32,12 +31,11 @@ export const getFollowingByUserId = async (userId: string): Promise<User[]> => {
         SELECT followed_id as user_id, created_at FROM follows WHERE follower_id = ?
     `);
     const rows = stmt.all(userId) as { user_id: string, created_at: string }[];
-    const users: User[] = [];
-    for (const row of rows) {
+    const users = await Promise.all(rows.map(async (row) => {
         const user = await getUserById(row.user_id);
         user.created_at = row.created_at;
-        users.push(user);
-    }
+        return user;
+    }));
     return users;
 }
 
@@ -60,14 +58,13 @@ export const getMoreFollowedUsers = async (): Promise<UserPreviewType[]> => {
         LIMIT 3
     `);
     const rows = stmt.all() as { user_id: string; followers: number }[];
-    const users: UserPreviewType[] = [];
-    for (const row of rows) {
+    const users = await Promise.all(rows.map(async (row) => {
         const user = await getUserById(row.user_id);
-        users.push({
+        return {
             ...user,
             followers: row.followers
-        });
-    }
+        };
+    }));
     return users;
 }
 
