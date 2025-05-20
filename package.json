@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "scriptia",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -21,6 +21,7 @@
     "@uiw/react-codemirror": "^4.23.12",
     "astro": "^5.7.12",
     "better-sqlite3": "^11.10.0",
+    "express": "^5.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tailwindcss": "^4.1.6",
