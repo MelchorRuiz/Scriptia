@@ -21,4 +21,4 @@ https://scriptia.melchor-ruiz.fr/
 
 # ¿Cómo se ha utilizado Clerk?
 
-Toda la gestión de usuarios es controlada por Clerk. Como toda red social, es necesario estar logueado para poder publicar y visualizar las publicaciones de los otros usuarios. Esto me permite solo almacenar el ID de un usuario (generado por Clerk) en mi base de datos en lugar de toda su información.
+Clerk gestiona el registro, inicio de sesión y sesiones de los usuarios. Solo guardo el ID único que genera Clerk en mi base de datos, y no datos sensibles. Esto asegura que solo usuarios registrados puedan publicar y ver contenido.
