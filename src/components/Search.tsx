@@ -39,7 +39,7 @@ export default function Search() {
                 <input
                     type="text"
                     className="flex-1 p-2 rounded-lg bg-gray-800 text-neutral-100 border border-gray-600 focus:ring-2 focus:ring-red-300 outline-none"
-                    placeholder="Buscar scripts por título o descripción..."
+                    placeholder="Buscar..."
                     value={query}
                     onChange={e => setQuery(e.target.value)}
                 />
