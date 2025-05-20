@@ -22,7 +22,6 @@ if (username === u.username) {
 
 const user = await getUserByUsername(username as string);
 
-console.log("user", user);
 if (!user) {
   return Astro.redirect("/");
 }
