@@ -6,7 +6,7 @@
 
 ## Descripción
 
-Scriptia es una red social diseñada para los entusiastas de Linux. Aquí puedes crear, probar y compartir tus propios scripts hechos en Bash, Python o NodeJs, conocer a otros usuarios apasionados y aprender mucho de toda la comunidad.
+Scriptia es una red social diseñada para los entusiastas de Linux. Aquí puedes crear, probar y compartir tus propios scripts hechos en Bash, Python o NodeJs, conocer a otros usuarios apasionados y aprender mucho de toda la comunidad.<br>
 La aplicación incluye un playground hecho con Docker para la ejecución de código, lo que permite que los usuarios puedan instalar las dependencias que necesiten y que la ejecución de código sea en un entorno aislado.
 
 # Demo
