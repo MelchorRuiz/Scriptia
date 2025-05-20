@@ -1,7 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PostPreview from "../components/PostPreview.tsx";
-import { getPostsSavedByUserId } from "../lib/posts";
+import ListOfPosts from "../components/ListOfPosts.astro";
 
 const user = await Astro.locals.currentUser();
 
@@ -9,19 +8,14 @@ if (!user) {
   return Astro.redirect("/sign-in")
 }
 
-const posts = getPostsSavedByUserId(user.id);
 ---
 
 <Layout title="Scriptia - Guardados" activeTab="saved">
     <h2 class="text-indigo-400 font-display text-3xl font-bold uppercase">Guardados</h2>
     <p class="text-neutral-500 mb-4">Aquí puedes ver todas las publicaciones que has guardado.</p>
-    {posts.length > 0 ? (
-        <div class="flex flex-col gap-2 mt-4">
-        {posts.map((post) => (
-            <PostPreview post={post} client:visible />
-        ))}
-        </div>
-    ) : (
-        <p class="text-neutral-300 text-lg lg:text-xl mt-4">No hay publicaciones guardadas.</p>
-    )}
+    <ListOfPosts
+      userId={user.id}
+      method="saved"
+      server:defer
+    />
 </Layout>

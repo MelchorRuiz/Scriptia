@@ -1,10 +1,10 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import PostPreview from "../../components/PostPreview";
+import ListOfPosts from "../../components/ListOfPosts.astro";
 import FollowButton from "../../components/FollowButton";
 import { getUserByUsername } from "../../lib/users";
 import { getFollowersByUserId, isFollowing } from "../../lib/followers";
-import { getNumberOfPostsByUserId, getPostsByUserId } from "../../lib/posts";
+import { getNumberOfPostsByUserId } from "../../lib/posts";
 import { getNumberOfFollowersByUserId } from "../../lib/followers";
 import { getNumberOfLikesByUserId } from "../../lib/likes";
 
@@ -38,7 +38,6 @@ const numberOfFollowers: number = getNumberOfFollowersByUserId(user.id);
 const numberOfLikes: number = getNumberOfLikesByUserId(user.id);
 const isFollowingUser = isFollowing(u.id, user.id);
 
-const posts = getPostsByUserId(user.id);
 const followers = await getFollowersByUserId(user.id);
 ---
 
@@ -146,19 +145,11 @@ const followers = await getFollowersByUserId(user.id);
   >
     Mis publicaciones
   </h3>
-  {
-    posts.length > 0 ? (
-      <div class="flex flex-col gap-2 mt-4">
-        {posts.map((post) => (
-          <PostPreview post={post} client:visible />
-        ))}
-      </div>
-    ) : (
-      <p class="text-neutral-300 text-lg mt-4">
-        Este usuario aún no ha publicado nada.
-      </p>
-    )
-  }
+  <ListOfPosts
+    userId={user.id}
+    method="profile"
+    server:defer
+  />
   <h3
     class="text-indigo-400 font-display text-xl lg:text-2xl font-bold mt-4 uppercase"
   >

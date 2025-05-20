@@ -1,8 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PostPreview from "../components/PostPreview";
-import { getFollowersByUserId, getFollowingByUserId } from "../lib/followers";
-import { getNumberOfPostsByUserId, getPostsByUserId } from "../lib/posts";
+import ListOfPosts from "../components/ListOfPosts.astro";
+import ListOfUsers from "../components/ListOfUsers.astro";
+import { getNumberOfPostsByUserId } from "../lib/posts";
 import { getNumberOfFollowersByUserId } from "../lib/followers";
 import { getNumberOfLikesByUserId } from "../lib/likes";
 
@@ -23,9 +23,6 @@ const numberOfPosts: number = getNumberOfPostsByUserId(id);
 const numberOfFollowers: number = getNumberOfFollowersByUserId(id);
 const numberOfLikes: number = getNumberOfLikesByUserId(id);
 
-const posts = getPostsByUserId(id);
-const followers = await getFollowersByUserId(id);
-const following = await getFollowingByUserId(id);
 ---
 
 <Layout title="Scriptia - Mi Perfil" activeTab="profile">
@@ -127,95 +124,29 @@ const following = await getFollowingByUserId(id);
   >
     Mis publicaciones
   </h3>
-  {
-    posts.length > 0 ? (
-      <div class="flex flex-col gap-2 mt-4">
-        {posts.map((post) => (
-          <PostPreview post={post} client:visible />
-        ))}
-      </div>
-    ) : (
-      <p class="text-neutral-300 text-lg mt-4">No tienes publicaciones aún.</p>
-    )
-  }
+  <ListOfPosts
+    userId={id}
+    method="profile"
+    server:defer
+  />
   <h3
     class="text-indigo-400 font-display text-xl lg:text-2xl font-bold mt-4 uppercase"
   >
     Mis seguidores
   </h3>
-  {
-    followers.length > 0 ? (
-      <ul class="flex flex-col gap-2 mt-4">
-        {followers.map((follower) => (
-          <li class="flex items-center p-2 ring-1 ring-neutral-100/80 rounded-md bg-neutral-800/80 hover:bg-neutral-700/60 transition-all duration-200">
-            <a
-              href={`/user/${follower.username}`}
-              class="text-neutral-100 w-full flex justify-between items-center"
-            >
-              <div class="flex items-center gap-2">
-                <img
-                  src={follower.image_url}
-                  alt={follower.username}
-                  class="rounded-full size-10"
-                />
-                <div>
-                  <h4 class="font-semibold">@{follower.username}</h4>
-                  <p class="text-neutral-400 text-sm">
-                    Te sigue desde el{" "}
-                    {new Date(follower.created_at).toLocaleDateString("es-MX", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-            </a>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p class="text-neutral-300 text-lg mt-4">No tienes seguidores aún.</p>
-    )
-  }
+  <ListOfUsers
+    userId={id}
+    method="followers"
+    server:defer
+  />
   <h3
     class="text-indigo-400 font-display text-xl lg:text-2xl font-bold mt-4 uppercase"
   >
     Mis seguidos
   </h3>
-  {
-    following.length > 0 ? (
-      <ul class="flex flex-col gap-2 mt-4">
-        {following.map((followed) => (
-          <li class="flex items-center p-2 ring-1 ring-neutral-100/80 rounded-md bg-neutral-800/80 hover:bg-neutral-700/60 transition-all duration-200">
-            <a
-              href={`/user/${followed.username}`}
-              class="text-neutral-100 w-full flex justify-between items-center"
-            >
-              <div class="flex items-center gap-2">
-                <img
-                  src={followed.image_url}
-                  alt={followed.username}
-                  class="rounded-full size-10"
-                />
-                <div>
-                  <h4 class="font-semibold">@{user.username}</h4>
-                  <p class="text-neutral-400 text-sm">
-                    Lo sigues desde el{" "}
-                    {new Date(followed.created_at).toLocaleDateString("es-MX", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-            </a>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p class="text-neutral-300 text-lg mt-4">No sigues a nadie aún.</p>
-    )
-  }
+  <ListOfUsers
+    userId={id}
+    method="following"
+    server:defer
+  />
 </Layout>

@@ -8,10 +8,12 @@ const { active } = Astro.props;
 ---
 
 <header
-    class="flex flex-col lg:items-end lg:justify-between lg:h-full w-full lg:w-80 border-b-[1px] lg:border-b-0 lg:border-r-[1px] py-6 lg:pr-4 border-neutral-50/60 top-0 left-0 lg:top-auto lg:left-auto bg-neutral-900 pointer-events-auto"
+    class="flex flex-col lg:items-end lg:justify-between lg:h-full w-full lg:w-80 border-b-[1px] lg:border-b-0 lg:border-r-[1px] py-6 lg:pr-4 border-neutral-50/60 top-0 left-0 lg:top-auto lg:left-auto bg-neutral-900 lg:bg-transparent pointer-events-auto"
 >
     <nav>
-        <h1 class="shadow-dance-text text-5xl font-bold text-neutral-100 text-center font-display">
+        <h1
+            class="shadow-dance-text text-5xl font-bold text-neutral-100 text-center font-display"
+        >
             scriptia
         </h1>
         <ul
@@ -174,16 +176,23 @@ const { active } = Astro.props;
 
 <style>
     .shadow-dance-text {
-        text-shadow: 5px 5px 0 var(--color-red-600), 10px 10px 0 var(--color-indigo-400);
+        text-shadow:
+            5px 5px 0 var(--color-red-600),
+            10px 10px 0 var(--color-indigo-400);
         animation: shadow-dance 2s infinite;
     }
 
     @keyframes shadow-dance {
-        0%, 100% {
-            text-shadow: 5px 5px 0 var(--color-red-600), 10px 10px 0 var(--color-indigo-400);
+        0%,
+        100% {
+            text-shadow:
+                5px 5px 0 var(--color-red-600),
+                10px 10px 0 var(--color-indigo-400);
         }
         50% {
-            text-shadow: -5px -5px 0 var(--color-indigo-400), -10px -10px 0 var(--color-red-600);
+            text-shadow:
+                -5px -5px 0 var(--color-indigo-400),
+                -10px -10px 0 var(--color-red-600);
         }
     }
 </style>

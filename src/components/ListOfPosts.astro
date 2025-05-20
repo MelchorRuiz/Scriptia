@@ -1,0 +1,38 @@
+---
+import PostPreview from "../components/PostPreview";
+import type { PostPreviewType } from "../types/Post";
+import { getPostsByUserId, getPostsLikedByUserId, getPostsSavedByUserId } from "../lib/posts";
+
+interface Props {
+    userId: string;
+    method: string;
+}
+
+const { userId, method } = Astro.props;
+
+let posts: PostPreviewType[] = [];
+
+if (method === "profile") {
+    posts = getPostsByUserId(userId);
+} else if (method === "likes") {
+    posts = getPostsLikedByUserId(userId);
+} else if (method === "saved") {
+    posts = getPostsSavedByUserId(userId);
+} else {
+    throw new Error("Invalid method");
+}
+---
+
+{
+    posts.length > 0 ? (
+        <div class="flex flex-col gap-2 mt-4">
+            {posts.map((post) => (
+                <PostPreview post={post} client:visible />
+            ))}
+        </div>
+    ) : (
+        <p class="text-neutral-300 text-lg mt-4">
+            No tienes publicaciones aún.
+        </p>
+    )
+}

@@ -1,0 +1,61 @@
+---
+import type { User } from "../types/User";
+import { getFollowersByUserId, getFollowingByUserId } from "../lib/followers";
+
+interface Props {
+    userId: string;
+    method: string;
+}
+
+const { userId, method } = Astro.props;
+
+let users: User[] = [];
+
+if (method === "followers") {
+    users = await getFollowersByUserId(userId);
+} else if (method === "following") {
+    users = await getFollowingByUserId(userId);
+} else {
+    throw new Error("Invalid method");
+}
+---
+
+{
+    users.length > 0 ? (
+        <ul class="flex flex-col gap-2 mt-4">
+            {users.map((user) => (
+                <li class="flex items-center p-2 ring-1 ring-neutral-100/80 rounded-md bg-neutral-800/80 hover:bg-neutral-700/60 transition-all duration-200">
+                    <a
+                        href={`/user/${user.username}`}
+                        class="text-neutral-100 w-full flex justify-between items-center"
+                    >
+                        <div class="flex items-center gap-2">
+                            <img
+                                src={user.image_url}
+                                alt={user.username}
+                                class="rounded-full size-10"
+                            />
+                            <div>
+                                <h4 class="font-semibold">
+                                    @{user.username}
+                                </h4>
+                                <p class="text-neutral-400 text-sm">
+                                    Te sigue desde el{" "}
+                                    {new Date(
+                                        user.created_at,
+                                    ).toLocaleDateString("es-MX", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    })}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            ))}
+        </ul>
+    ) : (
+        <p class="text-neutral-300 text-lg mt-4">No tienes seguidores aún.</p>
+    )
+}
