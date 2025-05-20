@@ -8,6 +8,7 @@ const isProtectedRoute = createRouteMatcher([
     "/likes", 
     "/new-post",
     "/post/:postId",
+    "/user/:username",
 ]);
 
 export const onRequest = clerkMiddleware((auth, context) => {
