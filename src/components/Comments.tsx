@@ -1,12 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Comment } from "../types/Comment";
 
-interface User {
-    id: string;
-    name: string;
-    image_url: string;
-}
-
 export default function Comments({ postId, comments }: { postId: string, comments: Comment[] }) {
     const [commentsList, setCommentsList] = useState<Comment[]>(comments);
     const [showErrors, setShowErrors] = useState(false);

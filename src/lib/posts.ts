@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3'
 import path from 'path';
-import type { PostPreviewType, PostMiniPreviewType } from '../types/Post';
+import type { PostPreviewType, PostMiniPreviewType, PostRowWithUser } from '../types/Post';
+import { getUserById } from './users';
 
 interface PostRow {
     id: string;
@@ -27,7 +28,7 @@ export const getNumberOfPostsByUserId = (userId: string) => {
     return row.count;
 }
 
-export const getPosts = (userId: string, page: number, limit: number): PostPreviewType[] => {
+export const getPosts = async (userId: string, page: number, limit: number): Promise<PostPreviewType[]> => {
     const stmt = db.prepare(`
         SELECT
             p.id,
@@ -36,6 +37,7 @@ export const getPosts = (userId: string, page: number, limit: number): PostPrevi
             pv.code,
             pv.language,
             pv.dependencies,
+            p.user_id,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -48,14 +50,27 @@ export const getPosts = (userId: string, page: number, limit: number): PostPrevi
         LIMIT ? OFFSET ?
     `);
     const offset = (page - 1) * limit;
-    const posts = stmt.all(userId, userId, limit, offset) as PostRow[];
-    return posts.map(post => ({
-        ...post,
-        dependencies: post.dependencies ? post.dependencies.split(',') : [],
-    }));
-}
+    const rows = stmt.all(userId, userId, limit, offset) as PostRowWithUser[];
 
-export const getPostById = (postId: string): PostPreviewType | null => {
+    const posts = await Promise.all(rows.map(async (row) => {
+        const user = await getUserById(row.user_id);
+        return {
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            code: row.code,
+            language: row.language,
+            dependencies: row.dependencies ? row.dependencies.split(',') : [],
+            liked: row.liked,
+            saved: row.saved,
+            username: user?.username || 'Unknown',
+        };
+    }));
+
+    return posts;
+};
+
+export const getPostById = async (postId: string): Promise<PostPreviewType | null> => {
     const stmt = db.prepare(`
         SELECT 
             p.id, 
@@ -64,6 +79,7 @@ export const getPostById = (postId: string): PostPreviewType | null => {
             pv.code, 
             pv.language,
             pv.dependencies,
+            p.user_id,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -74,16 +90,25 @@ export const getPostById = (postId: string): PostPreviewType | null => {
         JOIN post_versions pv ON p.id = pv.post_id and pv.created_at = p.last_activity_at
         WHERE p.id = ?
     `);
-    const post = stmt.get(postId, postId, postId) as PostRow ;
-    if (!post) return null;
+    const row = stmt.get(postId, postId, postId) as PostRowWithUser;
+    if (!row) return null;
+
+    const user = await getUserById(row.user_id);
+
     return {
-        ...post,
-        dependencies: post.dependencies ? post.dependencies.split(',') : [],
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        code: row.code,
+        language: row.language,
+        dependencies: row.dependencies ? row.dependencies.split(',') : [],
+        liked: row.liked,
+        saved: row.saved,
+        username: user?.username || 'Unknown',
     };
+};
 
-}
-
-export const getPostsBySearch = (userId: string, search: string): PostPreviewType[] => {
+export const getPostsBySearch = async (userId: string, search: string): Promise<PostPreviewType[]> => {
     const stmt = db.prepare(`
         SELECT
             p.id,
@@ -92,6 +117,7 @@ export const getPostsBySearch = (userId: string, search: string): PostPreviewTyp
             pv.code,
             pv.language,
             pv.dependencies,
+            p.user_id,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -104,22 +130,36 @@ export const getPostsBySearch = (userId: string, search: string): PostPreviewTyp
         ORDER BY p.created_at DESC
         LIMIT 10
     `);
-    const posts = stmt.all(userId, userId, `%${search}%`, `%${search}%`) as PostRow[];
-    return posts.map(post => ({
-        ...post,
-        dependencies: post.dependencies ? post.dependencies.split(',') : [],
-    }));
-}
+    const rows = stmt.all(userId, userId, `%${search}%`, `%${search}%`) as PostRowWithUser[];
 
-export const getPostsByUserId = (userId: string): PostPreviewType[] => {
+    const posts = await Promise.all(rows.map(async (row) => {
+        const user = await getUserById(row.user_id);
+        return {
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            code: row.code,
+            language: row.language,
+            dependencies: row.dependencies ? row.dependencies.split(',') : [],
+            liked: row.liked,
+            saved: row.saved,
+            username: user?.username || 'Unknown',
+        };
+    }));
+
+    return posts;
+};
+
+export const getPostsByUserId = async (userId: string): Promise<PostPreviewType[]> => {
     const stmt = db.prepare(`
-        SELECT 
-            p.id, 
-            pv.title, 
-            pv.description, 
-            pv.code, 
+        SELECT
+            p.id,
+            pv.title,
+            pv.description,
+            pv.code,
             pv.language,
             pv.dependencies,
+            p.user_id,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -131,14 +171,27 @@ export const getPostsByUserId = (userId: string): PostPreviewType[] => {
         WHERE p.user_id = ?
         ORDER BY p.created_at DESC
     `);
-    const posts = stmt.all(userId, userId, userId) as PostRow[];
-    return posts.map(post => ({
-        ...post,
-        dependencies: post.dependencies ? post.dependencies.split(',') : [],
+    const rows = stmt.all(userId, userId, userId) as PostRowWithUser[];
+
+    const posts = await Promise.all(rows.map(async (row) => {
+        const user = await getUserById(row.user_id);
+        return {
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            code: row.code,
+            language: row.language,
+            dependencies: row.dependencies ? row.dependencies.split(',') : [],
+            liked: row.liked,
+            saved: row.saved,
+            username: user?.username || 'Unknown',
+        };
     }));
+
+    return posts;
 }
 
-export const getPostsLikedByUserId = (userId: string): PostPreviewType[] => {
+export const getPostsLikedByUserId = async (userId: string): Promise<PostPreviewType[]> => {
     const stmt = db.prepare(`
         SELECT 
             p.id, 
@@ -147,6 +200,7 @@ export const getPostsLikedByUserId = (userId: string): PostPreviewType[] => {
             pv.code, 
             pv.language,
             pv.dependencies,
+            p.user_id,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -159,12 +213,25 @@ export const getPostsLikedByUserId = (userId: string): PostPreviewType[] => {
         WHERE l.user_id = ?
         ORDER BY p.created_at DESC
     `);
-    const posts = stmt.all(userId, userId, userId) as PostRow[];
-    return posts.map(post => ({
-        ...post,
-        dependencies: post.dependencies ? post.dependencies.split(',') : [],
+    const rows = stmt.all(userId, userId, userId) as PostRowWithUser[];
+
+    const posts = await Promise.all(rows.map(async (row) => {
+        const user = await getUserById(row.user_id);
+        return {
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            code: row.code,
+            language: row.language,
+            dependencies: row.dependencies ? row.dependencies.split(',') : [],
+            liked: row.liked,
+            saved: row.saved,
+            username: user?.username || 'Unknown',
+        };
     }));
-}
+
+    return posts;
+};
 
 export const getPostsMostLiked = (): PostMiniPreviewType[] => {
     const stmt = db.prepare(`
@@ -183,7 +250,7 @@ export const getPostsMostLiked = (): PostMiniPreviewType[] => {
     return stmt.all() as PostMiniPreviewType[];
 }
 
-export const getPostsSavedByUserId = (userId: string): PostPreviewType[] => {
+export const getPostsSavedByUserId = async (userId: string): Promise<PostPreviewType[]> => {
     const stmt = db.prepare(`
         SELECT
             p.id,
@@ -192,6 +259,7 @@ export const getPostsSavedByUserId = (userId: string): PostPreviewType[] => {
             pv.code,
             pv.language,
             pv.dependencies,
+            p.user_id,
             EXISTS (
                 SELECT 1 FROM likes l WHERE l.post_id = p.id AND l.user_id = ?
             ) AS liked,
@@ -204,12 +272,25 @@ export const getPostsSavedByUserId = (userId: string): PostPreviewType[] => {
         WHERE s.user_id = ?
         ORDER BY p.created_at DESC
     `);
-    const posts = stmt.all(userId, userId, userId) as PostRow[];
-    return posts.map(post => ({
-        ...post,
-        dependencies: post.dependencies ? post.dependencies.split(',') : [],
+    const rows = stmt.all(userId, userId, userId) as PostRowWithUser[];
+
+    const posts = await Promise.all(rows.map(async (row) => {
+        const user = await getUserById(row.user_id);
+        return {
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            code: row.code,
+            language: row.language,
+            dependencies: row.dependencies ? row.dependencies.split(',') : [],
+            liked: row.liked,
+            saved: row.saved,
+            username: user?.username || 'Unknown',
+        };
     }));
-}
+
+    return posts;
+};
 
 export const createPost = async (
     userId: string,

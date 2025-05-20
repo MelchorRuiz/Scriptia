@@ -11,7 +11,7 @@ import Ubuntu from "../../components/icons/Ubuntu.astro";
 import Alpine from "../../components/icons/Alpine.astro";
 
 const { id } = Astro.params;
-const post = getPostById(id as string);
+const post = await getPostById(id as string);
 if (!post) {
     return Astro.redirect("/");
 }
@@ -37,8 +37,11 @@ const comments = await getCommentsByPostId(id as string);
                 ) : null
             }
         </div>
-        <div>
-            <p class="text-neutral-200 mb-4">{post.description}</p>
+        <div class="mb-2">
+            <p class="text-neutral-200 mb-2">{post.description}</p>
+            <p class="text-neutral-400 text-sm">
+                Creado por <a href={`/user/${post.username}`} class="text-indigo-300 hover:underline">{post.username}</a>
+            </p>
         </div>
     </div>
     <ShowCode

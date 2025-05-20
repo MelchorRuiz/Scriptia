@@ -20,6 +20,9 @@ export const getFollowersByUserId = async (userId: string): Promise<User[]> => {
     const rows = stmt.all(userId) as { user_id: string, created_at: string }[];
     const users = await Promise.all(rows.map(async (row) => {
         const user = await getUserById(row.user_id);
+        if (!user) {
+            throw new Error(`User with id ${row.user_id} not found`);
+        }
         user.created_at = row.created_at;
         return user;
     }));
@@ -33,6 +36,9 @@ export const getFollowingByUserId = async (userId: string): Promise<User[]> => {
     const rows = stmt.all(userId) as { user_id: string, created_at: string }[];
     const users = await Promise.all(rows.map(async (row) => {
         const user = await getUserById(row.user_id);
+        if (!user) {
+            throw new Error(`User with id ${row.user_id} not found`);
+        }
         user.created_at = row.created_at;
         return user;
     }));
@@ -60,6 +66,9 @@ export const getMoreFollowedUsers = async (): Promise<UserPreviewType[]> => {
     const rows = stmt.all() as { user_id: string; followers: number }[];
     const users = await Promise.all(rows.map(async (row) => {
         const user = await getUserById(row.user_id);
+        if (!user) {
+            throw new Error(`User with id ${row.user_id} not found`);
+        }
         return {
             ...user,
             followers: row.followers

@@ -10,6 +10,9 @@ export async function getCommentsByPostId(postId: string): Promise<Comment[]> {
     const comments = stmt.all(postId) as Comment[];
     const commentsWithUser = await Promise.all(comments.map(async (comment: Comment) => {
         const user = await getUserById(comment.user_id);
+        if (!user) {
+            throw new Error(`User with ID ${comment.user_id} not found`);
+        }
         return {
             ...comment,
             user,
@@ -24,6 +27,9 @@ export async function addComment(postId: number, userId: string, content: string
     const select = db.prepare('SELECT * FROM comments WHERE id = ?');
     const newComment = select.get(result.lastInsertRowid) as Comment;
     const user = await getUserById(userId);
+    if (!user) {
+        throw new Error(`User with ID ${userId} not found`);
+    }
     return {
         ...newComment,
         user,

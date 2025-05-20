@@ -11,7 +11,7 @@ export const GET: APIRoute = async ({ locals, request }) => {
     const query = searchParams.get('q') || '';
 
     try {
-        const posts = getPostsBySearch(user.id, query);
+        const posts = await getPostsBySearch(user.id, query);
         return new Response(JSON.stringify({ posts }), { status: 200 });
     } catch (error) {
         return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });

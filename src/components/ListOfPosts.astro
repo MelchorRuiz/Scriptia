@@ -13,11 +13,11 @@ const { userId, method } = Astro.props;
 let posts: PostPreviewType[] = [];
 
 if (method === "profile") {
-    posts = getPostsByUserId(userId);
+    posts = await getPostsByUserId(userId);
 } else if (method === "likes") {
-    posts = getPostsLikedByUserId(userId);
+    posts = await getPostsLikedByUserId(userId);
 } else if (method === "saved") {
-    posts = getPostsSavedByUserId(userId);
+    posts = await getPostsSavedByUserId(userId);
 } else {
     throw new Error("Invalid method");
 }

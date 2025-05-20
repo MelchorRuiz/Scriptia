@@ -8,7 +8,7 @@ interface PostPreviewProps {
 }
 
 export default function PostPreview({ post }: PostPreviewProps) {
-    const { id, title, description, code, liked, saved, language } = post;
+    const { id, title, description, code, liked, saved, language, username } = post;
     const [like, setLike] = useState(liked);
     const [save, setSave] = useState(saved);
 
@@ -38,11 +38,14 @@ export default function PostPreview({ post }: PostPreviewProps) {
     };
 
     return (
-        <a href={`/post/${id}`} className="text-neutral-100 ring-2 ring-gray-700 rounded-lg p-4 flex flex-col gap-2 max-h-64 overflow-y-hidden relative pb-16">
+        <a href={`/post/${id}`} className="text-neutral-100 ring-2 ring-gray-700 rounded-lg p-4 flex flex-col max-h-64 overflow-y-hidden relative pb-16">
             <h3 className="text-xl font-bold text-indigo-300">
                 {title}
             </h3>
-            <p className="text-base text-neutral-300">
+            <p className="text-sm text-neutral-400">
+                Creado por <span className="text-indigo-300">{username}</span>
+            </p>
+            <p className="text-base text-neutral-300 mb-2">
                 {description}
             </p>
             <CodeMirror

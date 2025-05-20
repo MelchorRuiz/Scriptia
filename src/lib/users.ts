@@ -1,7 +1,7 @@
 import { CLERK_SECRET_KEY } from 'astro:env/server';
 import type { User } from '../types/User';
 
-export const getUserById = async (user_id: string): Promise<User> => {
+export const getUserById = async (user_id: string): Promise<User | null> => {
     const request = await fetch(`https://api.clerk.com/v1/users/${user_id}`, {
         method: 'GET',
         headers: {
@@ -10,7 +10,7 @@ export const getUserById = async (user_id: string): Promise<User> => {
         },
     });
     if (!request.ok) {
-        return Promise.reject(new Error('Failed to fetch user'));
+        return null;
     }
     const { id, username, image_url, created_at } = await request.json();
     return { id, username, image_url, created_at };

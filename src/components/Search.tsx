@@ -14,6 +14,7 @@ export default function Search() {
             const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
             if (!res.ok) throw new Error('Error al buscar');
             const data = await res.json();
+            console.log(data);
             setResults(data.posts || []);
         } catch (err) {
             console.error(err);
