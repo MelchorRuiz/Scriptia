@@ -3,7 +3,7 @@ import path from 'path';
 import { getUserById } from './users';
 import type { User, UserPreviewType } from '../types/User';
 
-const db = new Database(path.resolve('data/database.sqlite'), { verbose: console.log });
+const db = new Database(path.resolve('data/database.sqlite'));
 
 export const getNumberOfFollowersByUserId = (userId: string) => {
     const stmt = db.prepare(`

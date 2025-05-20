@@ -13,7 +13,7 @@ interface PostRow {
     saved: boolean;
 }
 
-const db = new Database(path.resolve('data/database.sqlite'), { verbose: console.log });
+const db = new Database(path.resolve('data/database.sqlite'));
 
 export const checkIfPostExists = (postId: string) => {
     const stmt = db.prepare('SELECT COUNT(*) as count FROM posts WHERE id = ?');

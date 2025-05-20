@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3'
 import path from 'path';
 
-const db = new Database(path.resolve('data/database.sqlite'), { verbose: console.log });
+const db = new Database(path.resolve('data/database.sqlite'));
 
 export const createSavedPost = (userId: string, postId: string) => {
     const stmt = db.prepare(`

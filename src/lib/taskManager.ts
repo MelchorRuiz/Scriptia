@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import Database from 'better-sqlite3';
 
-const db = new Database(path.resolve('data/database.sqlite'), { verbose: console.log });
+const db = new Database(path.resolve('data/database.sqlite'));
 
 function createTask() {
   const id = uuidv4();

@@ -3,7 +3,7 @@ import path from 'path';
 import { getUserById } from './users';
 import type { Comment } from '../types/Comment';
 
-const db = new Database(path.resolve('data/database.sqlite'), { verbose: console.log });
+const db = new Database(path.resolve('data/database.sqlite'));
 
 export async function getCommentsByPostId(postId: string): Promise<Comment[]> {
     const stmt = db.prepare('SELECT * FROM comments WHERE post_id = ? ORDER BY created_at DESC');
