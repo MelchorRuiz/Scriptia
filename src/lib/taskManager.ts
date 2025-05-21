@@ -45,8 +45,10 @@ function runTask(
         break;
       case 'nodejs':
         image = 'node:24-alpine';
-        installCmd = dependencies.length > 0 ? `npm install -g ${dependencies.join(' ')} > /dev/null && ` : '';
-        entrypoint = 'node /script.js';
+        if (dependencies.length > 0) {
+          installCmd = `mkdir -p ~/p && cd ~/p && npm init -y > /dev/null && npm install ${dependencies.join(' ')} > /dev/null && cp /script.js . && `;
+        }
+        entrypoint = 'node ./script.js';
         break;
       default:
         image = 'alpine';
