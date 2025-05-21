@@ -228,7 +228,7 @@ export default function NewPostForm() {
                     <div>
                         <p className='text-yellow-700 font-bold'>Advertencia</p>
                         <p className='text-neutral-100 text-sm'>
-                            El código se ejecuta en un contenedor Docker aislado. No tiene acceso a recursos del sistema como namespaces, dispositivos o archivos externos, ni consola interactiva (no se puede usar input() en Python). Sin embargo, sí cuenta con acceso a internet. Ten esto en cuenta al ejecutar tu código.
+                            El código se ejecuta en un contenedor Docker aislado. No tiene acceso a recursos del sistema como namespaces, dispositivos o archivos externos, ni consola interactiva (no se puede usar input() en Python). Sin embargo, sí cuenta con acceso a internet. Para NodeJs usa CommonJS (require) en vez de ES6 (import). Ten esto en cuenta al ejecutar tu código.
                         </p>
                     </div>
                 </div>
