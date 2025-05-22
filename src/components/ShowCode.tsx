@@ -106,7 +106,7 @@ export default function ShowCode({ language, dependecies, code }: ShowCodeProps)
                     <input
                         type="text"
                         className="block p-2.5 text-sm gray-100 border focus:ring-neutral-500 bg-gray-700 border-gray-600 placeholder-gray-400 text-neutral-100 focus:border-neutral-500 focus-visible:outline-none flex-1"
-                        placeholder="Parámetros de entrada (opcional) ej: --parametro1 valor1 --parametro2 valor2"
+                        placeholder="Parámetros de entrada (opcional) ej: valor1 --parametro2 valor2 -p3 valor3"
                         value={params}
                         onChange={(e) => setParams(e.target.value)}
                     />
