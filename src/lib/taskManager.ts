@@ -30,23 +30,23 @@ function runTask(
     switch (platform) {
       case 'alpine':
         image = 'alpine';
-        installCmd = dependencies.length > 0 ? `apk update &> /dev/null && apk add --no-cache ${dependencies.join(' ')} &> /dev/null && ` : '';
+        installCmd = dependencies.length > 0 ? `apk update > /dev/null && apk add --no-cache ${dependencies.join(' ')} > /dev/null && ` : '';
         entrypoint = 'sh /script.sh';
         break;
       case 'ubuntu':
         image = 'ubuntu';
-        installCmd = dependencies.length > 0 ? `apt-get update &> /dev/null && apt-get install -y apt-utils ${dependencies.join(' ')} &> /dev/null && ` : '';
+        installCmd = dependencies.length > 0 ? `apt-get update > /dev/null && apt-get install -y ${dependencies.join(' ')} > /dev/null && ` : '';
         entrypoint = 'bash /script.sh';
         break;
       case 'python':
         image = 'python:3.13-alpine';
-        installCmd = dependencies.length > 0 ? `PIP_DISABLE_PIP_VERSION_CHECK=1 pip install --root-user-action=ignore --no-warn-script-location ${dependencies.join(' ')} &> /dev/null && ` : '';
+        installCmd = dependencies.length > 0 ? `PIP_DISABLE_PIP_VERSION_CHECK=1 pip install --root-user-action=ignore --no-warn-script-location ${dependencies.join(' ')} > /dev/null && ` : '';
         entrypoint = 'python /script.py';
         break;
       case 'nodejs':
         image = 'node:24-alpine';
         if (dependencies.length > 0) {
-          installCmd = `mkdir -p ~/p && cd ~/p && npm init -y &> /dev/null && npm install npm install --quiet ${dependencies.join(' ')} &> /dev/null && cp /script.js . && `;
+          installCmd = `mkdir -p ~/p && cd ~/p && npm init -y > /dev/null && npm install ${dependencies.join(' ')} > /dev/null && cp /script.js . && `;
         }
         entrypoint = 'node ./script.js';
         break;
