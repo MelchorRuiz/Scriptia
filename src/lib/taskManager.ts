@@ -30,25 +30,33 @@ function runTask(
     switch (platform) {
       case 'alpine':
         image = 'alpine';
-        installCmd = dependencies.length > 0 ? `apk update > /dev/null && apk add --no-cache ${dependencies.join(' ')} > /dev/null && ` : '';
+        if (dependencies.length > 0) {
+          installCmd = `apk update && apk add --no-cache ${dependencies.join(' ')}`;
+        }
         entrypoint = 'sh /script.sh';
         break;
       case 'ubuntu':
         image = 'ubuntu';
-        installCmd = dependencies.length > 0 ? `apt-get update > /dev/null && apt-get install -y ${dependencies.join(' ')} > /dev/null && ` : '';
+        if (dependencies.length > 0) {
+          installCmd = `apt-get update && apt-get install -y ${dependencies.join(' ')}`;
+        }
         entrypoint = 'bash /script.sh';
         break;
       case 'python':
         image = 'python:3.13-alpine';
-        installCmd = dependencies.length > 0 ? `PIP_DISABLE_PIP_VERSION_CHECK=1 pip install --root-user-action=ignore --no-warn-script-location ${dependencies.join(' ')} > /dev/null && ` : '';
+        if (dependencies.length > 0) {
+          installCmd = `PIP_DISABLE_PIP_VERSION_CHECK=1 pip install --root-user-action=ignore --no-warn-script-location ${dependencies.join(' ')}`;
+        }
         entrypoint = 'python /script.py';
         break;
       case 'nodejs':
         image = 'node:24-alpine';
         if (dependencies.length > 0) {
-          installCmd = `mkdir -p ~/p && cd ~/p && npm init -y > /dev/null && npm install ${dependencies.join(' ')} > /dev/null && cp /script.js . && `;
+          installCmd = `mkdir -p ~/p && cd ~/p && npm init -y && npm install ${dependencies.join(' ')} --save && cp /script.js ~/p/index.js`;
+          entrypoint = 'node ~/p/index.js';
+        } else {
+          entrypoint = 'node /script.js';
         }
-        entrypoint = 'node ./script.js';
         break;
       default:
         image = 'alpine';
@@ -64,7 +72,7 @@ function runTask(
 
     const safeParams = params.replace(/(["$`\\])/g, '\\$1');
 
-    const cmd = `docker run --rm --network bridge --cpus="0.25" --memory="128m" -v ${tmpScriptPath}:/script${scriptExt}:ro ${image} sh -c "${installCmd} ${entrypoint} ${safeParams}"`;
+    const cmd = `docker run --rm --network bridge --cpus="0.25" --memory="128m" -v ${tmpScriptPath}:/script${scriptExt}:ro ${image} sh -c "${installCmd ? `( ${installCmd} ) > /dev/null 2>&1; ` : ''}${entrypoint} ${safeParams}"`;
 
     const proc = exec(cmd, { timeout: 300000 }, (error) => {
       fs.unlinkSync(tmpScriptPath);
