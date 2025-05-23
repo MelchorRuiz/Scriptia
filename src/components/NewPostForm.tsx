@@ -236,7 +236,7 @@ export default function NewPostForm() {
             <div className='mb-3'>
                 <div className="flex flex-col lg:flex-row w-full">
                     <div className='bg-gray-700 flex items-center justify-center px-4 text-neutral-100 text-nowrap lg:rounded-l-lg h-8 lg:h-auto'>
-                        ./mi-script.sh
+                        ./mi-script.{language === 'python' ? 'py' : language === 'nodejs' ? 'js' : 'sh'}
                     </div>
                     <input
                         type="text"
@@ -244,14 +244,17 @@ export default function NewPostForm() {
                         placeholder="Parámetros de entrada (opcional) ej: valor1 --parametro2 valor2 -p3 valor3"
                         value={params}
                         onChange={(e) => setParams(e.target.value)}
+                        disabled
                     />
                     <button
                         type="button"
-                        className="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 focus:outline-none lg:rounded-r-lg px-5 cursor-pointer disabled:opacity-50 text-nowrap flex items-center justify-center h-8 lg:h-auto"
-                        onClick={handleTryCode}
-                        disabled={!code || taskId !== null}
+                        className="text-gray-900 bg-gradient-to-r from-teal-200/50 to-lime-200/50 focus:outline-none lg:rounded-r-lg px-5 cursor-pointer text-nowrap flex items-center justify-center h-8 lg:h-auto relative group"
+                        disabled
                     >
                         Prueba tu código
+                        <span className="absolute top-12 text-neutral-900 w-52 p-2 text-wrap bg-white opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-150">
+                            Por el momento esta función no está disponible
+                        </span>
                     </button>
                 </div>
             </div>
