@@ -8,7 +8,7 @@ export const GET: APIRoute = async ({ locals, params }) => {
   }
 
   const id = params.id as string;
-  const task = getTask(id);
+  const task = await getTask(id);
 
   if (!task) {
     return new Response(JSON.stringify({ error: 'Task not found' }), {

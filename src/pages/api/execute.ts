@@ -16,7 +16,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
     });
   }
 
-  const { id } = createTask();
+  const { id } = await createTask();
   queue.add(() => runTask(id, code, params, language, dependecies))
 
   return new Response(JSON.stringify({ taskId: id }), {

@@ -1,20 +1,23 @@
-import Database from 'better-sqlite3';
-import path from 'path';
+import { turso } from './db';
 import { getUserById } from './users';
 import type { Comment } from '../types/Comment';
 
-const db = new Database(path.resolve('data/database.sqlite'));
-
 export async function getCommentsByPostId(postId: string): Promise<Comment[]> {
-    const stmt = db.prepare('SELECT * FROM comments WHERE post_id = ? ORDER BY created_at DESC');
-    const comments = stmt.all(postId) as Comment[];
-    const commentsWithUser = await Promise.all(comments.map(async (comment: Comment) => {
-        const user = await getUserById(comment.user_id);
+    const { rows } = await turso.execute({
+        sql: 'SELECT * FROM comments WHERE post_id = ? ORDER BY created_at DESC',
+        args: [postId],
+    });
+    const commentsWithUser = await Promise.all(rows.map(async (row: any) => {
+        const user = await getUserById(String(row.user_id));
         if (!user) {
-            throw new Error(`User with ID ${comment.user_id} not found`);
+            throw new Error(`User with ID ${row.user_id} not found`);
         }
         return {
-            ...comment,
+            id: Number(row.id),
+            post_id: Number(row.post_id),
+            user_id: String(row.user_id),
+            content: String(row.content),
+            created_at: String(row.created_at),
             user,
         };
     }));
@@ -22,16 +25,25 @@ export async function getCommentsByPostId(postId: string): Promise<Comment[]> {
 }
 
 export async function addComment(postId: number, userId: string, content: string): Promise<Comment> {
-    const stmt = db.prepare('INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)');
-    const result = stmt.run(postId, userId, content);
-    const select = db.prepare('SELECT * FROM comments WHERE id = ?');
-    const newComment = select.get(result.lastInsertRowid) as Comment;
+    await turso.execute({
+        sql: 'INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)',
+        args: [postId, userId, content],
+    });
+    const { rows } = await turso.execute({
+        sql: 'SELECT * FROM comments WHERE post_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT 1',
+        args: [postId, userId],
+    });
+    const row = rows[0];
     const user = await getUserById(userId);
     if (!user) {
         throw new Error(`User with ID ${userId} not found`);
     }
     return {
-        ...newComment,
+        id: Number(row.id),
+        post_id: Number(row.post_id),
+        user_id: String(row.user_id),
+        content: String(row.content),
+        created_at: String(row.created_at),
         user,
     };
 }

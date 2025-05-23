@@ -14,12 +14,12 @@ export const POST: APIRoute = async ({ locals, params }) => {
             return new Response('Bad Request', { status: 400 });
         }
 
-        const postExists = checkIfPostExists(postId);
+        const postExists = await checkIfPostExists(postId);
         if (!postExists) {
             return new Response('Post not found', { status: 404 });
         }
 
-        createLike(user.id, postId);
+        await createLike(user.id, postId);
         return new Response(JSON.stringify({ message: 'Post liked successfully' }), {
             status: 200,
             headers: {
@@ -46,12 +46,12 @@ export const DELETE: APIRoute = async ({ locals, params }) => {
             return new Response('Bad Request', { status: 400 });
         }
 
-        const postExists = checkIfPostExists(postId);
+        const postExists = await checkIfPostExists(postId);
         if (!postExists) {
             return new Response('Post not found', { status: 404 });
         }
 
-        deleteLike(user.id, postId);
+        await deleteLike(user.id, postId);
         return new Response(JSON.stringify({ message: 'Post unliked successfully' }), {
             status: 200,
             headers: {

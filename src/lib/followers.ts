@@ -1,94 +1,80 @@
-import Database from 'better-sqlite3'
-import path from 'path';
+import { turso } from './db';
 import { getUserById } from './users';
 import type { User, UserPreviewType } from '../types/User';
 
-const db = new Database(path.resolve('data/database.sqlite'));
-
-export const getNumberOfFollowersByUserId = (userId: string) => {
-    const stmt = db.prepare(`
-        SELECT COUNT(*) as count FROM follows WHERE followed_id = ?
-    `);
-    const row = stmt.get(userId) as { count: number };
-    return row.count;
-}
+export const getNumberOfFollowersByUserId = async (userId: string) => {
+    const { rows } = await turso.execute({
+        sql: 'SELECT COUNT(*) as count FROM follows WHERE followed_id = ?',
+        args: [userId],
+    });
+    return Number(rows[0]?.count ?? 0);
+};
 
 export const getFollowersByUserId = async (userId: string): Promise<User[]> => {
-    const stmt = db.prepare(`
-        SELECT follower_id as user_id, created_at FROM follows WHERE followed_id = ?
-    `);
-    const rows = stmt.all(userId) as { user_id: string, created_at: string }[];
-    const users = await Promise.all(rows.map(async (row) => {
-        const user = await getUserById(row.user_id);
+    const { rows } = await turso.execute({
+        sql: 'SELECT follower_id as user_id, created_at FROM follows WHERE followed_id = ?',
+        args: [userId],
+    });
+    const users = await Promise.all(rows.map(async (row: any) => {
+        const user = await getUserById(String(row.user_id));
         if (!user) {
             throw new Error(`User with id ${row.user_id} not found`);
         }
-        user.created_at = row.created_at;
+        user.created_at = String(row.created_at);
         return user;
     }));
     return users;
-}
+};
 
 export const getFollowingByUserId = async (userId: string): Promise<User[]> => {
-    const stmt = db.prepare(`
-        SELECT followed_id as user_id, created_at FROM follows WHERE follower_id = ?
-    `);
-    const rows = stmt.all(userId) as { user_id: string, created_at: string }[];
-    const users = await Promise.all(rows.map(async (row) => {
-        const user = await getUserById(row.user_id);
+    const { rows } = await turso.execute({
+        sql: 'SELECT followed_id as user_id, created_at FROM follows WHERE follower_id = ?',
+        args: [userId],
+    });
+    const users = await Promise.all(rows.map(async (row: any) => {
+        const user = await getUserById(String(row.user_id));
         if (!user) {
             throw new Error(`User with id ${row.user_id} not found`);
         }
-        user.created_at = row.created_at;
+        user.created_at = String(row.created_at);
         return user;
     }));
     return users;
-}
+};
 
-export const isFollowing = (followerId: string, followedId: string): boolean => {
-    const stmt = db.prepare(`
-        SELECT COUNT(*) as count FROM follows WHERE follower_id = ? AND followed_id = ?
-    `);
-    const row = stmt.get(followerId, followedId) as { count: number };
-    return row.count > 0;
-}
+export const isFollowing = async (followerId: string, followedId: string): Promise<boolean> => {
+    const { rows } = await turso.execute({
+        sql: 'SELECT COUNT(*) as count FROM follows WHERE follower_id = ? AND followed_id = ?',
+        args: [followerId, followedId],
+    });
+    return Number(rows[0]?.count ?? 0) > 0;
+};
 
 export const getMoreFollowedUsers = async (): Promise<UserPreviewType[]> => {
-    const stmt = db.prepare(`
-        SELECT 
-            followed_id as user_id, 
-            COUNT(follower_id) as followers
-        FROM follows
-        GROUP BY followed_id
-        ORDER BY followers DESC
-        LIMIT 3
-    `);
-    const rows = stmt.all() as { user_id: string; followers: number }[];
-    const users = await Promise.all(rows.map(async (row) => {
-        const user = await getUserById(row.user_id);
+    const { rows } = await turso.execute('SELECT followed_id as user_id, COUNT(follower_id) as followers FROM follows GROUP BY followed_id ORDER BY followers DESC LIMIT 3');
+    const users = await Promise.all(rows.map(async (row: any) => {
+        const user = await getUserById(String(row.user_id));
         if (!user) {
             throw new Error(`User with id ${row.user_id} not found`);
         }
         return {
             ...user,
-            followers: row.followers
+            followers: Number(row.followers)
         };
     }));
     return users;
-}
+};
 
-export const createFollow = (followerId: string, followedId: string) => {
-    const stmt = db.prepare(`
-        INSERT INTO follows (follower_id, followed_id) 
-        VALUES (?, ?)
-    `);
-    stmt.run(followerId, followedId);
-}
+export const createFollow = async (followerId: string, followedId: string) => {
+    await turso.execute({
+        sql: 'INSERT INTO follows (follower_id, followed_id) VALUES (?, ?)',
+        args: [followerId, followedId],
+    });
+};
 
-export const deleteFollow = (followerId: string, followedId: string) => {
-    const stmt = db.prepare(`
-        DELETE FROM follows 
-        WHERE follower_id = ? AND followed_id = ?
-    `);
-    stmt.run(followerId, followedId);
-}
+export const deleteFollow = async (followerId: string, followedId: string) => {
+    await turso.execute({
+        sql: 'DELETE FROM follows WHERE follower_id = ? AND followed_id = ?',
+        args: [followerId, followedId],
+    });
+};

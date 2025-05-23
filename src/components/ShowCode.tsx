@@ -114,7 +114,7 @@ export default function ShowCode({ language, dependecies, code }: ShowCodeProps)
                     <button
                         type="button"
                         className="text-gray-900 bg-gradient-to-r from-teal-200/50 to-lime-200/50 focus:outline-none lg:rounded-r-lg px-5 cursor-pointer text-nowrap flex items-center justify-center h-8 lg:h-auto relative group"
-                        disabled
+                        onClick={handleTryCode}
                     >
                         Prueba tu código
                         <span className="absolute top-12 text-neutral-900 w-52 p-2 text-wrap bg-white opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-150">

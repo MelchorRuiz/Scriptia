@@ -1,28 +1,23 @@
-import Database from 'better-sqlite3'
-import path from 'path';
+import { turso } from './db';
 
-const db = new Database(path.resolve('data/database.sqlite'));
+export const getNumberOfLikesByUserId = async (userId: string) => {
+    const { rows } = await turso.execute({
+        sql: `SELECT COUNT(*) as count FROM likes WHERE post_id IN (SELECT id FROM posts WHERE user_id = ?)`,
+        args: [userId],
+    });
+    return Number(rows[0]?.count ?? 0);
+};
 
-export const getNumberOfLikesByUserId = (userId: string) => {
-    const stmt = db.prepare(`
-        SELECT COUNT(*) as count FROM likes WHERE post_id IN (
-            SELECT id FROM posts WHERE user_id = ?
-        )
-    `);
-    const row = stmt.get(userId) as { count: number };
-    return row.count;
-}
+export const createLike = async (userId: string, postId: string) => {
+    await turso.execute({
+        sql: 'INSERT INTO likes (user_id, post_id) VALUES (?, ?)',
+        args: [userId, postId],
+    });
+};
 
-export const createLike = (userId: string, postId: string) => {
-    const stmt = db.prepare(`
-        INSERT INTO likes (user_id, post_id) VALUES (?, ?)
-    `);
-    stmt.run(userId, postId);
-}
-
-export const deleteLike = (userId: string, postId: string) => {
-    const stmt = db.prepare(`
-        DELETE FROM likes WHERE user_id = ? AND post_id = ?
-    `);
-    stmt.run(userId, postId);
-}
+export const deleteLike = async (userId: string, postId: string) => {
+    await turso.execute({
+        sql: 'DELETE FROM likes WHERE user_id = ? AND post_id = ?',
+        args: [userId, postId],
+    });
+};

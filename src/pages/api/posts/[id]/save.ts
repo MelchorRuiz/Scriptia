@@ -14,12 +14,12 @@ export const POST: APIRoute = async ({ locals, params }) => {
             return new Response('Bad Request', { status: 400 });
         }
 
-        const postExists = checkIfPostExists(postId);
+        const postExists = await checkIfPostExists(postId);
         if (!postExists) {
             return new Response('Post not found', { status: 404 });
         }
 
-        createSavedPost(user.id, postId);
+        await createSavedPost(user.id, postId);
         return new Response(JSON.stringify({ message: 'Post saved successfully' }), {
             status: 200,
             headers: {
@@ -44,12 +44,12 @@ export const DELETE: APIRoute = async ({ locals, params }) => {
             return new Response('Bad Request', { status: 400 });
         }
 
-        const postExists = checkIfPostExists(postId);
+        const postExists = await checkIfPostExists(postId);
         if (!postExists) {
             return new Response('Post not found', { status: 404 });
         }
 
-        deleteSavedPost(user.id, postId);
+        await deleteSavedPost(user.id, postId);
         return new Response(JSON.stringify({ message: 'Post unsaved successfully' }), {
             status: 200,
             headers: {

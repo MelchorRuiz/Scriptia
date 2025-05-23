@@ -13,7 +13,7 @@ export const POST: APIRoute = async ({ locals, params }) => {
             return new Response('Bad Request', { status: 400 });
         }
 
-        createFollow(user.id, userId);
+        await createFollow(user.id, userId);
         return new Response(JSON.stringify({ message: 'User followed successfully' }), {
             status: 201,
             headers: {
@@ -40,7 +40,7 @@ export const DELETE: APIRoute = async ({ locals, params }) => {
             return new Response('Bad Request', { status: 400 });
         }
 
-        deleteFollow(user.id, userId);
+        await deleteFollow(user.id, userId);
         return new Response(JSON.stringify({ message: 'User unfollowed successfully' }), {
             status: 200,
             headers: {

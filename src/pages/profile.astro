@@ -19,9 +19,9 @@ const formattedDate = createdAtDate.toLocaleDateString("es-MX", {
   month: "long",
   day: "numeric",
 });
-const numberOfPosts: number = getNumberOfPostsByUserId(id);
-const numberOfFollowers: number = getNumberOfFollowersByUserId(id);
-const numberOfLikes: number = getNumberOfLikesByUserId(id);
+const numberOfPosts: number = await getNumberOfPostsByUserId(id);
+const numberOfFollowers: number = await getNumberOfFollowersByUserId(id);
+const numberOfLikes: number = await getNumberOfLikesByUserId(id);
 
 ---
 

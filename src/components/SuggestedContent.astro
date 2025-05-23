@@ -2,7 +2,9 @@
 import { getPostsMostLiked } from "../lib/posts";
 import { getMoreFollowedUsers } from "../lib/followers";
 
+const posts = await getPostsMostLiked();
 const users = await getMoreFollowedUsers();
+
 ---
 
 <section
@@ -43,7 +45,7 @@ const users = await getMoreFollowedUsers();
         </h3>
         <ul class="mt-2 flex flex-col gap-2">
             {
-                getPostsMostLiked().map(async (post) => (
+                posts.map(async (post) => (
                     <li class="flex items-center p-2 ring-1 ring-neutral-100/80 rounded-md bg-neutral-800/80 hover:bg-neutral-700/60 transition-all duration-200">
                         <a
                             href={`/post/${post.id}`}

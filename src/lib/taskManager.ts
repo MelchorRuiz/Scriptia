@@ -1,15 +1,16 @@
 import { exec } from 'child_process';
 import os from 'os';
 import fs from 'fs';
-import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
-import Database from 'better-sqlite3';
+import { v4 as uuidv4 } from 'uuid';
+import { turso } from './db';
 
-const db = new Database(path.resolve('data/database.sqlite'));
-
-function createTask() {
+async function createTask() {
   const id = uuidv4();
-  db.prepare('INSERT INTO logs (id, output, status) VALUES (?, ?, ?)').run(id, '', 'queued');
+  await turso.execute({
+    sql: 'INSERT INTO logs (id, output, status) VALUES (?, ?, ?)',
+    args: [id, '', 'queued'],
+  });
   return { id };
 }
 
@@ -21,7 +22,10 @@ function runTask(
   dependencies: string[] = []
 ) {
   return new Promise<void>((resolve) => {
-    db.prepare('UPDATE logs SET status = ? WHERE id = ?').run('running', id);
+    turso.execute({
+      sql: 'UPDATE logs SET status = ? WHERE id = ?',
+      args: ['running', id],
+    });
 
     let installCmd = '';
     let image = '';
@@ -78,30 +82,48 @@ function runTask(
       fs.unlinkSync(tmpScriptPath);
 
       if (error) {
-        db.prepare('UPDATE logs SET output = output || ? , status = ? WHERE id = ?')
-          .run('\n[ERROR]', 'failed', id);
+        turso.execute({
+          sql: 'UPDATE logs SET output = output || ? , status = ? WHERE id = ?',
+          args: ['\n[ERROR]', 'failed', id],
+        });
         return resolve();
       }
 
-      db.prepare('UPDATE logs SET status = ? WHERE id = ?').run('finished', id);
+      turso.execute({
+        sql: 'UPDATE logs SET status = ? WHERE id = ?',
+        args: ['finished', id],
+      });
       resolve();
     });
 
     proc.stdout?.on('data', data => {
-      db.prepare('UPDATE logs SET output = output || ? WHERE id = ?').run(data, id);
+      turso.execute({
+        sql: 'UPDATE logs SET output = output || ? WHERE id = ?',
+        args: [data, id],
+      });
     });
     proc.stderr?.on('data', data => {
-      db.prepare('UPDATE logs SET output = output || ? WHERE id = ?').run(data, id);
+      turso.execute({
+        sql: 'UPDATE logs SET output = output || ? WHERE id = ?',
+        args: [data, id],
+      });
     });
   });
 }
 
-function getTask(id: string) {
-  const row = db.prepare('SELECT status, output FROM logs WHERE id = ?').get(id) as { status: string; output: string } | undefined;
+async function getTask(id: string) {
+  const { rows } = await turso.execute({
+    sql: 'SELECT status, output FROM logs WHERE id = ?',
+    args: [id],
+  });
+  const row = rows[0];
   if (!row) return null;
 
   if (row.status === 'failed' || row.status === 'finished') {
-    db.prepare('DELETE FROM logs WHERE id = ?').run(id);
+    await turso.execute({
+      sql: 'DELETE FROM logs WHERE id = ?',
+      args: [id],
+    });
   }
   return { status: row.status, log: row.output };
 }
