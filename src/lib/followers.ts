@@ -1,9 +1,10 @@
+import { getSecret } from 'astro:env/server';
 import Database from 'better-sqlite3'
 import path from 'path';
 import { getUserById } from './users';
 import type { User, UserPreviewType } from '../types/User';
 
-const db = new Database(path.resolve('data/database.sqlite'));
+const db = new Database(path.resolve(getSecret("DB_FILE") || 'data/database.sqlite'));
 
 export const getNumberOfFollowersByUserId = (userId: string) => {
     const stmt = db.prepare(`

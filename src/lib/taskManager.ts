@@ -1,3 +1,4 @@
+import { getSecret } from 'astro:env/server';
 import { exec } from 'child_process';
 import os from 'os';
 import fs from 'fs';
@@ -5,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import Database from 'better-sqlite3';
 
-const db = new Database(path.resolve('data/database.sqlite'));
+const db = new Database(path.resolve(getSecret("DB_FILE") || 'data/database.sqlite'));
 
 function createTask() {
   const id = uuidv4();

@@ -1,9 +1,10 @@
+import { getSecret } from 'astro:env/server';
 import Database from 'better-sqlite3';
 import path from 'path';
 import { getUserById } from './users';
 import type { Comment } from '../types/Comment';
 
-const db = new Database(path.resolve('data/database.sqlite'));
+const db = new Database(path.resolve(getSecret("DB_FILE") || 'data/database.sqlite'));
 
 export async function getCommentsByPostId(postId: string): Promise<Comment[]> {
     const stmt = db.prepare('SELECT * FROM comments WHERE post_id = ? ORDER BY created_at DESC');
