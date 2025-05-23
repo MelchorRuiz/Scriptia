@@ -1,10 +1,20 @@
-import { getSecret } from 'astro:env/server';
 import Database from 'better-sqlite3'
 import path from 'path';
 import type { PostPreviewType, PostMiniPreviewType, PostRowWithUser } from '../types/Post';
 import { getUserById } from './users';
 
-const db = new Database(path.resolve(getSecret("DB_FILE") || 'data/database.sqlite'));
+interface PostRow {
+    id: string;
+    title: string;
+    description: string;
+    code: string;
+    language: string;
+    dependencies: string;
+    liked: boolean;
+    saved: boolean;
+}
+
+const db = new Database(path.resolve('data/database.sqlite'));
 
 export const checkIfPostExists = (postId: string) => {
     const stmt = db.prepare('SELECT COUNT(*) as count FROM posts WHERE id = ?');
